@@ -31,6 +31,66 @@ brew tap AndroidPoet/tap && brew install revenuecat-cli
 
 Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releases/latest). After install, use `revenuecat-cli` or the alias `rc`.
 
+## Command Map
+
+```
+rc
+├── projects
+│   ├── list                          # List all projects
+│   └── create                        # Create a new project
+├── apps
+│   ├── list / get / create           # CRUD operations
+│   ├── update / delete               # Modify or remove
+│   └── api-keys                      # List public API keys
+├── products
+│   ├── list / get / create           # Manage store products
+│   └── delete                        # Remove a product
+├── entitlements
+│   ├── list / get / create           # Manage entitlements
+│   ├── update / delete               # Modify or remove
+│   └── list-products / attach / detach  # Product associations
+├── offerings
+│   ├── list / get / create           # Manage offerings
+│   └── update / delete               # Modify or remove
+├── packages
+│   ├── list / get / create           # Manage packages
+│   ├── update / delete               # Modify or remove
+│   └── list-products / attach / detach  # Product associations
+├── customers
+│   ├── list / get / create / delete  # CRUD operations
+│   ├── list-subscriptions            # View subscriptions
+│   ├── list-purchases                # View purchases
+│   ├── list-invoices                 # View invoices
+│   ├── list-active-entitlements      # View active entitlements
+│   ├── list-aliases / list-attributes   # View customer data
+│   ├── set-attributes               # Update attributes
+│   ├── grant-entitlement             # Grant access
+│   ├── revoke-entitlement            # Revoke access
+│   ├── assign-offering               # Override offering
+│   └── transfer                      # Transfer to another customer
+├── subscriptions
+│   ├── get / list-entitlements       # View details
+│   ├── cancel                        # Cancel subscription
+│   └── refund                        # Refund subscription
+├── purchases
+│   ├── get / list-entitlements       # View details
+│   └── refund                        # Refund purchase
+├── paywalls
+│   ├── list / get / create           # Manage paywalls
+│   └── delete                        # Remove a paywall
+├── metrics
+│   └── overview                      # MRR, subscribers, trials, revenue
+├── webhooks
+│   ├── list                          # View webhook integrations
+│   └── create                        # Create a webhook
+├── audit-logs
+│   └── list                          # View audit log entries
+└── auth
+    ├── login / switch                # Manage profiles
+    ├── list / current                # View profiles
+    └── delete                        # Remove a profile
+```
+
 ## Setup
 
 ```bash
