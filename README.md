@@ -171,34 +171,60 @@ rc version                                             # Version info
 
 ## CI/CD Integration
 
-### GitHub Actions
+### GitHub Actions — Audit Subscription Config
+
+Verify your RevenueCat setup hasn't drifted from expected state:
 
 ```yaml
-name: Configure RevenueCat
+name: Audit RevenueCat Config
 
 on:
-  push:
-    branches: [main]
+  schedule:
+    - cron: '0 9 * * 1' # Weekly Monday 9am
+  workflow_dispatch:      # Manual trigger
 
 jobs:
-  setup:
+  audit:
     runs-on: ubuntu-latest
+    env:
+      RC_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
+      RC_PROJECT: ${{ secrets.REVENUECAT_PROJECT_ID }}
     steps:
-      - uses: actions/checkout@v4
-
       - name: Install RC CLI
         run: |
           curl -fsSL https://raw.githubusercontent.com/AndroidPoet/revenuecat-cli/main/install.sh | bash
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Create Products
-        env:
-          RC_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
-          RC_PROJECT: ${{ secrets.REVENUECAT_PROJECT_ID }}
-        run: |
-          rc products create --store-identifier com.app.monthly --type subscription --app-id $APP_ID
-          rc entitlements create --lookup-key premium --display-name "Premium"
-          rc entitlements attach-products --entitlement-id $ENT_ID --product-ids $PROD_ID
+      - name: Verify connectivity
+        run: rc doctor
+
+      - name: Snapshot entitlements
+        run: rc entitlements list --all --pretty
+
+      - name: Snapshot offerings
+        run: rc offerings list --all --pretty
+
+      - name: Snapshot products
+        run: rc products list --all -o csv > products.csv
+
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: revenuecat-snapshot-${{ github.run_id }}
+          path: products.csv
+```
+
+### Scripting Examples
+
+```bash
+# Export all entitlements as CSV
+rc entitlements list --all -o csv > entitlements.csv
+
+# Check if a specific offering exists
+rc offerings list --all -o minimal | grep -q "default" && echo "Found"
+
+# Count products
+rc products list --all -o json | jq length
 ```
 
 ---
