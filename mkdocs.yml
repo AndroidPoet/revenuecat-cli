@@ -7,8 +7,8 @@ repo_name: AndroidPoet/revenuecat-cli
 
 theme:
   name: material
-  logo: assets/logo.png
-  favicon: assets/logo.png
+  logo: assets/logo-small.png
+  favicon: assets/logo-small.png
   palette:
     - scheme: default
       primary: deep purple

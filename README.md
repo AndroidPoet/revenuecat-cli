@@ -211,6 +211,30 @@ rc completion zsh > "${fpath[1]}/_rc"
 rc version
 ```
 
+## Agent Skills
+
+Use `rc` with AI coding agents. Install the skill pack and your agent learns every command — products, entitlements, offerings, customers, metrics, and more.
+
+```bash
+npx skills add AndroidPoet/revenuecat-cli-skills
+```
+
+Then just ask:
+
+```
+Create a premium entitlement and attach my monthly subscription product
+```
+```
+Show me the current MRR and active subscriber count
+```
+```
+Look up customer user_123 and list their active entitlements
+```
+
+[Browse all 8 skills →](https://github.com/AndroidPoet/revenuecat-cli-skills)
+
+---
+
 ## Output Formats
 
 ```bash
