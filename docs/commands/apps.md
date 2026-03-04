@@ -171,4 +171,4 @@ rc apps api-keys --app-id app_xxxxx
 | `--app-id` | The app ID |
 
 !!! tip
-    Use `--output minimal` to get just the key values, useful for piping into scripts or CI/CD workflows.
+    Use `--output minimal` to get just the key values, useful for piping into scripts.

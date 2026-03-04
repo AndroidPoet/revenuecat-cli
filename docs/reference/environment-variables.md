@@ -41,38 +41,6 @@ rc apps list --output table
 
 ## Usage Examples
 
-### CI/CD Pipeline
-
-```bash
-export RC_API_KEY="sk_xxxxx"
-export RC_PROJECT="proj_xxxxx"
-export RC_OUTPUT="json"
-
-# No auth profile needed -- env vars are sufficient
-rc products list | jq '.items | length'
-rc entitlements list --all --output csv > entitlements.csv
-```
-
-### Docker
-
-```dockerfile
-ENV RC_API_KEY=sk_xxxxx
-ENV RC_PROJECT=proj_xxxxx
-ENV RC_TIMEOUT=30s
-```
-
-### GitHub Actions
-
-```yaml
-steps:
-  - name: Check subscription metrics
-    env:
-      RC_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
-      RC_PROJECT: proj_xxxxx
-    run: |
-      rc metrics overview --output json
-```
-
 ### Shell Profile
 
 Add to `~/.bashrc` or `~/.zshrc` for persistent defaults:

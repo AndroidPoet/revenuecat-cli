@@ -98,18 +98,6 @@ Configuration is resolved in this order (highest priority first):
 !!! note
     Flags always win. If you pass `--project proj_yyy` on the command line, it overrides everything else.
 
----
-
-## CI/CD Example
-
-```bash
-export RC_API_KEY="sk_xxxxx"
-export RC_PROJECT="proj_xxxxx"
-export RC_OUTPUT="json"
-
-rc products list | jq '.items[].identifier'
-```
-
 ## Next Steps
 
 Head to the [Quick Start](quickstart.md) to run your first commands.
