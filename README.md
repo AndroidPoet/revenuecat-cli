@@ -1,306 +1,443 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="RevenueCat CLI" width="400">
+<br>
 
-# RevenueCat CLI
+<img src="assets/logo.png" alt="RevenueCat CLI" width="420">
 
-### Manage in-app subscriptions from your terminal
+<br>
+<br>
 
-[![Latest Release](https://img.shields.io/github/v/release/AndroidPoet/revenuecat-cli?style=for-the-badge&color=F25A5A&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIgMkw0IDdWMTdMMTIgMjJMMjAgMTdWN0wxMiAyWiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=)](https://github.com/AndroidPoet/revenuecat-cli/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/AndroidPoet/revenuecat-cli/total?style=for-the-badge&color=blue)](https://github.com/AndroidPoet/revenuecat-cli/releases)
-[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go)](https://go.dev)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+<h3>Subscriptions belong in the terminal, not the dashboard.</h3>
 
-**No dashboard. No clicking. Just subscriptions.**
+<br>
 
-```bash
-rc entitlements create --lookup-key premium --display-name "Premium Access"
+[![Release](https://img.shields.io/github/v/release/AndroidPoet/revenuecat-cli?style=for-the-badge&color=4B48F2&label=Latest)](https://github.com/AndroidPoet/revenuecat-cli/releases/latest)
+&nbsp;
+[![Downloads](https://img.shields.io/github/downloads/AndroidPoet/revenuecat-cli/total?style=for-the-badge&color=E8514A)](https://github.com/AndroidPoet/revenuecat-cli/releases)
+&nbsp;
+[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
+&nbsp;
+[![MIT](https://img.shields.io/badge/License-MIT-F5A623?style=for-the-badge)](LICENSE)
+
+<br>
+
+```
+$ rc offerings list -o table
+
+LOOKUP_KEY    DISPLAY_NAME        IS_CURRENT
+─             ─                   ─
+default       Default Offering    true
+premium       Premium Tier        false
+enterprise    Enterprise Plan     false
 ```
 
-[Install](#-installation) · [Quick Start](#-quick-start) · [Commands](#-commands) · [CI/CD](#-cicd-integration)
+<br>
+
+[Install](#-install) · [Quick Start](#-quick-start) · [All Commands](#-all-commands) · [Scripting](#-scripting) · [Config](#-configuration)
+
+<br>
 
 </div>
 
 ---
 
-## Why RC CLI
+<br>
 
-| The Old Way | The RC Way |
-|-------------|------------|
-| Open dashboard, navigate menus, wait... | `rc apps list` |
-| Create products through UI one by one | `rc products create --store-identifier com.app.sub` |
-| Manually attach products to entitlements | `rc entitlements attach-products --product-ids id1,id2` |
-| Complex setup for CI/CD automation | Single binary + `RC_API_KEY` env var |
-| "Did someone change the offering?" | `rc offerings list -o table` |
+## 🎯 Why
+
+| 😤 Without `rc` | ⚡ With `rc` |
+|:---|:---|
+| Open dashboard → Settings → Apps → scroll... | `rc apps list` |
+| Click through 4 screens to create a product | `rc products create --store-identifier com.app.pro --type subscription --app-id app_xxx` |
+| Manually wire products to entitlements | `rc entitlements attach-products --product-ids prod1,prod2` |
+| "Who changed the current offering?" | `rc offerings list -o table` |
+| Export product catalog? Screenshot the UI... | `rc products list --all -o csv > products.csv` |
+| Debug a customer's subscription state | `rc customers get --customer-id user_12345 --pretty` |
+
+<br>
 
 ---
 
-## Installation
+<br>
+
+## 📦 Install
+
+<table>
+<tr>
+<td>
+
+**Homebrew**
 
 ```bash
-# Homebrew (recommended)
-brew tap AndroidPoet/tap && brew install revenuecat-cli
+brew tap AndroidPoet/tap
+brew install revenuecat-cli
+```
 
-# Install script (Linux/macOS)
+</td>
+<td>
+
+**Script**
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/AndroidPoet/revenuecat-cli/main/install.sh | bash
+```
 
-# Build from source
+</td>
+<td>
+
+**Source**
+
+```bash
 git clone https://github.com/AndroidPoet/revenuecat-cli.git
 cd revenuecat-cli && make build
 ```
 
-After install, you can use either `revenuecat-cli` or the shorter alias `rc`.
+</td>
+</tr>
+</table>
+
+> Use `revenuecat-cli` or the alias **`rc`**. Same binary, your choice.
+
+<br>
 
 ---
 
-## Quick Start
+<br>
 
-**1. Get your API key** from [RevenueCat Dashboard → API Keys](https://app.revenuecat.com/settings/api-keys)
+## 🚀 Quick Start
 
-Create a **v2 secret key** with appropriate permissions.
+**1.** Grab your **v2 secret key** from [RevenueCat → API Keys](https://app.revenuecat.com/settings/api-keys)
 
-**2. Configure**
+**2.** Login and set your project:
+
 ```bash
-rc auth login --api-key sk_your_secret_key_here
-```
-
-**3. Set your project**
-```bash
+rc auth login --api-key sk_your_key_here
 rc init --project proj_your_project_id
-# Or use the flag: rc apps list --project proj_xxx
-# Or set the env: export RC_PROJECT=proj_xxx
 ```
 
-**4. Start managing subscriptions!**
+**3.** Verify everything:
+
 ```bash
-rc apps list                          # See your apps
-rc entitlements list                  # View entitlements
-rc offerings list -o table            # Offerings in table format
-rc doctor                             # Verify everything works
+$ rc doctor
+
+✓ Configuration: OK (/Users/you/.revenuecat-cli/config.json)
+✓ API Key: OK (sk_tes...here)
+✓ Project ID: OK (proj_your_project_id)
+✓ API Connectivity: OK (Successfully connected to RevenueCat API)
+
+All checks passed!
 ```
+
+**4.** Go:
+
+```bash
+rc apps list
+rc entitlements list -o table
+rc offerings list --pretty
+```
+
+<br>
 
 ---
 
-## Commands
+<br>
 
-**11 command groups, 34 subcommands.**
+## 📖 All Commands
 
-### Apps
+<details open>
+<summary><h3>🏗️ Apps — 6 commands</h3></summary>
+
+> Create and manage apps across **iOS, Android, Stripe, Amazon, Mac, Roku, and Web**.
 
 ```bash
-rc apps list                                           # List all apps
-rc apps get --app-id app_xxx                           # App details
-rc apps create --name "My App" --type play_store       # Create app
-rc apps update --app-id app_xxx --name "New Name"      # Update app
-rc apps delete --app-id app_xxx --confirm              # Delete app
-rc apps api-keys --app-id app_xxx                      # List public API keys
+rc apps list                                            # List all apps
+rc apps get --app-id app_xxx                            # Get details
+rc apps create --name "My App" --type play_store        # Create
+rc apps update --app-id app_xxx --name "New Name"       # Rename
+rc apps delete --app-id app_xxx --confirm               # Delete
+rc apps api-keys --app-id app_xxx                       # Public API keys
 ```
 
-### Products
+**App types:** `app_store` · `play_store` · `stripe` · `amazon` · `mac_app_store` · `roku` · `web`
+
+</details>
+
+<details open>
+<summary><h3>📦 Products — 2 commands</h3></summary>
 
 ```bash
-rc products list                                       # List all products
+rc products list                                        # All products
 rc products create --store-identifier com.app.monthly \
-  --type subscription --app-id app_xxx                 # Create product
+  --type subscription --app-id app_xxx                  # Create
 ```
 
-### Entitlements
+**Product types:** `subscription` · `one_time`
+
+</details>
+
+<details open>
+<summary><h3>🔑 Entitlements — 8 commands</h3></summary>
+
+> The heart of RevenueCat. Full CRUD + product association management.
 
 ```bash
-rc entitlements list                                   # List all entitlements
-rc entitlements get --entitlement-id entl_xxx           # Get details
+rc entitlements list                                    # List all
+rc entitlements get --entitlement-id entl_xxx            # Get one
 rc entitlements create --lookup-key premium \
-  --display-name "Premium"                             # Create entitlement
+  --display-name "Premium"                              # Create
 rc entitlements update --entitlement-id entl_xxx \
-  --display-name "Premium+"                            # Update
+  --display-name "Premium+"                             # Rename
 rc entitlements delete --entitlement-id entl_xxx \
-  --confirm                                            # Delete
-rc entitlements list-products \
-  --entitlement-id entl_xxx                            # List attached products
-rc entitlements attach-products \
-  --entitlement-id entl_xxx --product-ids prod1,prod2  # Attach products
-rc entitlements detach-products \
-  --entitlement-id entl_xxx --product-ids prod1        # Detach products
+  --confirm                                             # Delete
 ```
 
-### Offerings
+**Product wiring:**
 
 ```bash
-rc offerings list                                      # List all offerings
+rc entitlements list-products --entitlement-id entl_xxx                        # See what's attached
+rc entitlements attach-products --entitlement-id entl_xxx --product-ids a,b    # Attach
+rc entitlements detach-products --entitlement-id entl_xxx --product-ids a      # Detach
+```
+
+</details>
+
+<details open>
+<summary><h3>🎁 Offerings — 3 commands</h3></summary>
+
+```bash
+rc offerings list                                       # All offerings
 rc offerings create --lookup-key default \
-  --display-name "Default Offering"                    # Create offering
+  --display-name "Default Offering"                     # Create
 rc offerings update --offering-id ofrngs_xxx \
-  --is-current                                         # Set as current
+  --is-current                                          # Make current
+rc offerings update --offering-id ofrngs_xxx \
+  --metadata '{"theme":"dark","version":2}'             # Set metadata
 ```
 
-### Packages
+</details>
+
+<details open>
+<summary><h3>📋 Packages — 4 commands</h3></summary>
+
+> Packages live inside offerings. They hold the products your paywall displays.
 
 ```bash
-rc packages list --offering-id ofrngs_xxx              # List packages
+rc packages list --offering-id ofrngs_xxx               # List
 rc packages create --offering-id ofrngs_xxx \
-  --lookup-key monthly --display-name "Monthly"        # Create package
+  --lookup-key monthly --display-name "Monthly"         # Create
 rc packages attach-products \
-  --package-id pkg_xxx --product-ids prod1,prod2       # Attach products
+  --package-id pkg_xxx --product-ids prod1,prod2        # Wire products
 rc packages detach-products \
-  --package-id pkg_xxx --product-ids prod1             # Detach products
+  --package-id pkg_xxx --product-ids prod1              # Unwire
 ```
 
-### Customers
+</details>
+
+<details>
+<summary><h3>👤 Customers — 2 commands</h3></summary>
 
 ```bash
-rc customers get --customer-id cust_xxx                # Get customer info
-rc customers delete --customer-id cust_xxx --confirm   # Delete customer
+rc customers get --customer-id $APP_USER_ID             # Full customer info
+rc customers delete --customer-id $APP_USER_ID --confirm
 ```
 
-### Paywalls
+</details>
+
+<details>
+<summary><h3>🎨 Paywalls — 1 command</h3></summary>
 
 ```bash
-rc paywalls create --offering-id ofrngs_xxx            # Create paywall
+rc paywalls create --offering-id ofrngs_xxx
 ```
 
-### Utilities
+</details>
+
+<details>
+<summary><h3>🔧 Utilities — 4 commands</h3></summary>
 
 ```bash
-rc doctor                                              # Validate setup
-rc init --project proj_xxx                             # Create .rc.yaml config
-rc completion zsh > "${fpath[1]}/_rc"                  # Shell completions
-rc version                                             # Version info
+rc doctor                                               # Diagnose issues
+rc init --project proj_xxx                              # Project config (.rc.yaml)
+rc completion zsh > "${fpath[1]}/_rc"                   # Shell completions
+rc version                                              # Version info
 ```
+
+</details>
+
+<br>
 
 ---
 
-## CI/CD Integration
+<br>
 
-### GitHub Actions — Audit Subscription Config
+## 🖥️ Output Formats
 
-Verify your RevenueCat setup hasn't drifted from expected state:
+Every command speaks 6 formats. Pick what fits.
+
+| Flag | Format | Best for |
+|:-----|:-------|:---------|
+| *(default)* | JSON | Scripting, `jq`, APIs |
+| `--pretty` | Pretty JSON | Reading in terminal |
+| `-o table` | Aligned columns | Quick scanning |
+| `-o csv` | CSV | Spreadsheets, exports |
+| `-o tsv` | Tab-separated | Unix pipelines |
+| `-o yaml` | YAML | Config files |
+| `-o minimal` | First field only | Piping IDs |
+
+```bash
+# Same data, different shapes
+rc entitlements list                  # [{"id":"entl_xxx","lookup_key":"premium",...}]
+rc entitlements list -o table         # ID            LOOKUP_KEY    DISPLAY_NAME
+rc entitlements list -o minimal       # entl_xxx
+rc entitlements list -o csv           # ID,LOOKUP_KEY,DISPLAY_NAME
+```
+
+<br>
+
+---
+
+<br>
+
+## 🔗 Scripting
+
+`rc` is designed to be piped, parsed, and composed.
+
+```bash
+# Export your entire product catalog
+rc products list --all -o csv > products.csv
+
+# Count entitlements
+rc entitlements list --all -o json | jq length
+
+# Check if an offering exists
+rc offerings list --all -o minimal | grep -q "default" && echo "exists"
+
+# Get all lookup keys
+rc entitlements list --all -o json | jq -r '.[].lookup_key'
+
+# Paginate manually
+rc products list --limit 10
+rc products list --limit 10 --starting-after prod_xxx
+
+# Or just get everything
+rc products list --all
+```
+
+<br>
+
+---
+
+<br>
+
+## ⚙️ Configuration
+
+### Multiple Profiles
+
+Switch between production, staging, or different projects seamlessly.
+
+```bash
+rc auth login --api-key sk_live_xxx --name production
+rc auth login --api-key sk_test_xxx --name staging --default-project proj_staging
+rc auth switch --name staging
+rc auth list -o table
+rc auth current
+```
+
+### Project Config (`.rc.yaml`)
+
+Drop this in your repo root — `rc` auto-discovers it:
+
+```bash
+rc init --project proj_xxx --output table
+```
 
 ```yaml
-name: Audit RevenueCat Config
-
-on:
-  schedule:
-    - cron: '0 9 * * 1' # Weekly Monday 9am
-  workflow_dispatch:      # Manual trigger
-
-jobs:
-  audit:
-    runs-on: ubuntu-latest
-    env:
-      RC_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
-      RC_PROJECT: ${{ secrets.REVENUECAT_PROJECT_ID }}
-    steps:
-      - name: Install RC CLI
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/AndroidPoet/revenuecat-cli/main/install.sh | bash
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Verify connectivity
-        run: rc doctor
-
-      - name: Snapshot entitlements
-        run: rc entitlements list --all --pretty
-
-      - name: Snapshot offerings
-        run: rc offerings list --all --pretty
-
-      - name: Snapshot products
-        run: rc products list --all -o csv > products.csv
-
-      - name: Upload snapshot
-        uses: actions/upload-artifact@v4
-        with:
-          name: revenuecat-snapshot-${{ github.run_id }}
-          path: products.csv
+# .rc.yaml
+project: proj_xxx
+output: table
 ```
 
-### Scripting Examples
-
-```bash
-# Export all entitlements as CSV
-rc entitlements list --all -o csv > entitlements.csv
-
-# Check if a specific offering exists
-rc offerings list --all -o minimal | grep -q "default" && echo "Found"
-
-# Count products
-rc products list --all -o json | jq length
-```
-
----
-
-## Environment Variables
+### Environment Variables
 
 | Variable | Description |
-|----------|-------------|
-| `RC_API_KEY` | RevenueCat API v2 secret key |
-| `RC_PROJECT` | Default project ID |
-| `RC_PROFILE` | Auth profile to use |
-| `RC_OUTPUT` | Format: `json` \| `table` \| `tsv` \| `csv` \| `yaml` |
-| `RC_DEBUG` | Show API requests/responses |
-| `RC_TIMEOUT` | Request timeout (default: 60s) |
+|:---------|:------------|
+| `RC_API_KEY` | API v2 secret key — overrides profile |
+| `RC_PROJECT` | Project ID |
+| `RC_PROFILE` | Active auth profile |
+| `RC_OUTPUT` | Default output format |
+| `RC_DEBUG` | `true` to log HTTP requests |
+| `RC_TIMEOUT` | Request timeout (default `60s`) |
+
+### Priority
+
+Flags → Environment variables → `.rc.yaml` → `~/.revenuecat-cli/config.json`
+
+<br>
 
 ---
 
-## Output Formats
+<br>
 
-```bash
-rc apps list                    # JSON (default, for scripting)
-rc apps list --pretty           # Pretty JSON
-rc apps list -o table           # ASCII table
-rc apps list -o tsv             # Tab-separated values
-rc apps list -o csv             # Comma-separated values
-rc apps list -o yaml            # YAML
-rc apps list -o minimal         # First field only (piping)
-```
+## 🔒 Security
 
----
+- Config stored at `~/.revenuecat-cli/config.json` with **`0600` permissions**
+- API keys **masked** in `rc doctor` output
+- Debug mode **redacts** Authorization headers
+- In CI: use `RC_API_KEY` env var — nothing touches disk
 
-## Pagination
-
-All list commands support pagination:
-
-```bash
-rc products list --limit 50                           # 50 results per page
-rc products list --starting-after prod_xxx            # Next page
-rc products list --all                                # Fetch everything
-```
+<br>
 
 ---
 
-## Security
+<br>
 
-- API keys stored with `0600` permissions
-- Keys are masked in `rc doctor` output
-- Debug mode redacts Authorization header values
-- No secrets in command history (use env vars in CI)
+## 🏗️ Built With
+
+<table>
+<tr>
+<td align="center" width="25%"><a href="https://github.com/spf13/cobra"><strong>Cobra</strong></a><br><sub>CLI framework</sub></td>
+<td align="center" width="25%"><a href="https://github.com/spf13/viper"><strong>Viper</strong></a><br><sub>Config management</sub></td>
+<td align="center" width="25%"><a href="https://goreleaser.com"><strong>GoReleaser</strong></a><br><sub>Cross-platform releases</sub></td>
+<td align="center" width="25%"><a href="https://www.revenuecat.com/docs/api-v2"><strong>RevenueCat API v2</strong></a><br><sub>REST API</sub></td>
+</tr>
+</table>
+
+> Architecture follows [playconsole-cli](https://github.com/AndroidPoet/playconsole-cli) — the same patterns, proven at scale with 80+ commands.
+
+<br>
 
 ---
 
-## Contributing
+<br>
 
-PRs welcome! Please open an issue first to discuss major changes.
+## 🤝 Contributing
 
 ```bash
 make build    # Build
 make test     # Test
 make lint     # Lint
+make help     # All targets
 ```
 
----
+PRs welcome. Open an issue first for major changes.
 
-## License
-
-MIT
+<br>
 
 ---
+
+<br>
 
 <div align="center">
 
-**[Back to top](#-revenuecat-cli)**
+**MIT License**
 
 <sub>Not affiliated with RevenueCat Inc. RevenueCat is a trademark of RevenueCat Inc.</sub>
 
-### If RC CLI saved you time, [give it a star](https://github.com/AndroidPoet/revenuecat-cli/stargazers)
+<br>
+<br>
+
+**[⭐ Star this repo](https://github.com/AndroidPoet/revenuecat-cli/stargazers)** if `rc` saved you a trip to the dashboard.
+
+<br>
 
 </div>
