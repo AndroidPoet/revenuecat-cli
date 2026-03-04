@@ -4,7 +4,11 @@ hide:
   - toc
 ---
 
-# RevenueCat CLI
+<div align="center" markdown>
+
+![RevenueCat CLI](assets/logo-full.png){ width="500" }
+
+</div>
 
 <div class="hero" markdown>
 
