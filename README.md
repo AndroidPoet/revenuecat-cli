@@ -31,65 +31,26 @@ brew tap AndroidPoet/tap && brew install revenuecat-cli
 
 Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releases/latest). After install, use `revenuecat-cli` or the alias `rc`.
 
-## Command Map
+## Command Overview
 
-```
-rc
-├── projects
-│   ├── list                          # List all projects
-│   └── create                        # Create a new project
-├── apps
-│   ├── list / get / create           # CRUD operations
-│   ├── update / delete               # Modify or remove
-│   └── api-keys                      # List public API keys
-├── products
-│   ├── list / get / create           # Manage store products
-│   └── delete                        # Remove a product
-├── entitlements
-│   ├── list / get / create           # Manage entitlements
-│   ├── update / delete               # Modify or remove
-│   └── list-products / attach / detach  # Product associations
-├── offerings
-│   ├── list / get / create           # Manage offerings
-│   └── update / delete               # Modify or remove
-├── packages
-│   ├── list / get / create           # Manage packages
-│   ├── update / delete               # Modify or remove
-│   └── list-products / attach / detach  # Product associations
-├── customers
-│   ├── list / get / create / delete  # CRUD operations
-│   ├── list-subscriptions            # View subscriptions
-│   ├── list-purchases                # View purchases
-│   ├── list-invoices                 # View invoices
-│   ├── list-active-entitlements      # View active entitlements
-│   ├── list-aliases / list-attributes   # View customer data
-│   ├── set-attributes               # Update attributes
-│   ├── grant-entitlement             # Grant access
-│   ├── revoke-entitlement            # Revoke access
-│   ├── assign-offering               # Override offering
-│   └── transfer                      # Transfer to another customer
-├── subscriptions
-│   ├── get / list-entitlements       # View details
-│   ├── cancel                        # Cancel subscription
-│   └── refund                        # Refund subscription
-├── purchases
-│   ├── get / list-entitlements       # View details
-│   └── refund                        # Refund purchase
-├── paywalls
-│   ├── list / get / create           # Manage paywalls
-│   └── delete                        # Remove a paywall
-├── metrics
-│   └── overview                      # MRR, subscribers, trials, revenue
-├── webhooks
-│   ├── list                          # View webhook integrations
-│   └── create                        # Create a webhook
-├── audit-logs
-│   └── list                          # View audit log entries
-└── auth
-    ├── login / switch                # Manage profiles
-    ├── list / current                # View profiles
-    └── delete                        # Remove a profile
-```
+> **65+ commands** across **14 resource groups** covering the full RevenueCat API v2.
+
+| Category | Commands | What you can do |
+|:---------|:---------|:----------------|
+| **Projects** | `list` `create` | Manage your RevenueCat projects |
+| **Apps** | `list` `get` `create` `update` `delete` `api-keys` | Configure app store connections |
+| **Products** | `list` `get` `create` `delete` | Define subscription and one-time products |
+| **Entitlements** | `list` `get` `create` `update` `delete` `attach-products` `detach-products` | Control access to premium features |
+| **Offerings** | `list` `get` `create` `update` `delete` | Group packages for remote configuration |
+| **Packages** | `list` `get` `create` `update` `delete` `attach-products` `detach-products` | Bundle products within offerings |
+| **Customers** | `list` `get` `create` `delete` + **11 more** | Full customer lifecycle management |
+| **Subscriptions** | `get` `list-entitlements` `cancel` `refund` | Manage active subscriptions |
+| **Purchases** | `get` `list-entitlements` `refund` | View and refund purchases |
+| **Paywalls** | `list` `get` `create` `delete` | Manage paywall configurations |
+| **Metrics** | `overview` | MRR, active subscribers, trials, revenue |
+| **Webhooks** | `list` `create` | Set up webhook integrations |
+| **Audit Logs** | `list` | Track changes and access history |
+| **Auth** | `login` `switch` `list` `current` `delete` | Manage API key profiles |
 
 ## Setup
 
