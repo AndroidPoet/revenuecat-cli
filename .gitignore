@@ -1,0 +1,23 @@
+# Binaries
+bin/
+dist/
+/revenuecat-cli
+/rc
+
+# Test
+coverage.out
+coverage.html
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Config (don't commit user configs)
+.rc.yaml

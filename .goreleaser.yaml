@@ -1,0 +1,102 @@
+# GoReleaser configuration for rc
+# https://goreleaser.com
+
+version: 2
+
+project_name: revenuecat-cli
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: revenuecat-cli
+    main: ./cmd/revenuecat-cli
+    binary: revenuecat-cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- .Arch }}
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - README.md
+      - LICENSE
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+
+brews:
+  - name: revenuecat-cli
+    repository:
+      owner: AndroidPoet
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/AndroidPoet/revenuecat-cli
+    description: "Fast, lightweight, and scriptable CLI for RevenueCat"
+    license: MIT
+    install: |
+      bin.install "revenuecat-cli"
+      bin.install_symlink "revenuecat-cli" => "rc"
+    test: |
+      system "#{bin}/rc", "version"
+
+nfpms:
+  - id: packages
+    package_name: revenuecat-cli
+    vendor: AndroidPoet
+    homepage: https://github.com/AndroidPoet/revenuecat-cli
+    description: "Fast, lightweight, and scriptable CLI for RevenueCat"
+    license: MIT
+    formats:
+      - deb
+      - rpm
+
+release:
+  github:
+    owner: AndroidPoet
+    name: revenuecat-cli
+  draft: false
+  prerelease: auto
+  footer: |
+    ## Installation
+    ```bash
+    brew tap AndroidPoet/tap && brew install revenuecat-cli
+    ```
+    Or use the install script:
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/AndroidPoet/revenuecat-cli/main/install.sh | bash
+    ```
