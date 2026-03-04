@@ -21,7 +21,7 @@ Manage your entire RevenueCat project without leaving the terminal. From product
 | Feature | Details |
 |---|---|
 | **65+ Commands** | Full coverage of the RevenueCat REST API v2 |
-| **13 Resource Groups** | Projects, Apps, Products, Entitlements, Offerings, Packages, Customers, Subscriptions, Purchases, Paywalls, Metrics, Webhooks, Audit Logs |
+| **14 Resource Groups** | Projects, Apps, Products, Entitlements, Offerings, Packages, Customers, Subscriptions, Purchases, Paywalls, Metrics, Webhooks, Audit Logs, Auth |
 | **7 Output Formats** | JSON, Pretty JSON, Table, CSV, TSV, YAML, Minimal |
 | **Cursor-Based Pagination** | Efficiently traverse large datasets with `--limit`, `--starting-after`, and `--all` |
 | **Multiple Auth Profiles** | Switch between accounts and projects seamlessly |
@@ -69,6 +69,6 @@ rc products list --output table
 - [**Installation**](getting-started/installation.md) -- Install via Homebrew or direct download
 - [**Configuration**](getting-started/configuration.md) -- Set up auth profiles and project defaults
 - [**Quick Start**](getting-started/quickstart.md) -- Your first commands in under a minute
-- [**Commands**](commands/projects.md) -- Browse all 65+ commands across 13 resource groups
+- [**Commands**](commands/projects.md) -- Browse all 65+ commands across 14 resource groups
 
 </div>
