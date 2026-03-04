@@ -53,7 +53,7 @@ func init() {
 type ProjectInfo struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
-	CreatedAt string `json:"created_at,omitempty"`
+	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
 func parseTimeout() time.Duration {

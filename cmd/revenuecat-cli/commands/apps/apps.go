@@ -113,7 +113,7 @@ type AppInfo struct {
 	Type        string `json:"type"`
 	BundleID    string `json:"bundle_id,omitempty"`
 	PackageName string `json:"package_name,omitempty"`
-	CreatedAt   string `json:"created_at,omitempty"`
+	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
 func parseTimeout() time.Duration {

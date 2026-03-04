@@ -135,7 +135,7 @@ type PackageInfo struct {
 	LookupKey   string `json:"lookup_key"`
 	DisplayName string `json:"display_name"`
 	OfferingID  string `json:"offering_id,omitempty"`
-	CreatedAt   string `json:"created_at,omitempty"`
+	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
 func parseTimeout() time.Duration {
@@ -370,12 +370,6 @@ func runDelete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-type PackageProductInfo struct {
-	ID              string `json:"id"`
-	StoreIdentifier string `json:"store_identifier"`
-	Type            string `json:"type"`
-}
-
 func runListProducts(cmd *cobra.Command, args []string) error {
 	if err := cli.RequireProject(cmd); err != nil {
 		return err
@@ -392,9 +386,9 @@ func runListProducts(cmd *cobra.Command, args []string) error {
 	path := fmt.Sprintf("/projects/%s/packages/%s/products", client.GetProjectID(), packageID)
 
 	if allPages {
-		var items []PackageProductInfo
+		var items []map[string]interface{}
 		err := client.ListAll(ctx, path, limit, func(raw json.RawMessage) error {
-			var page []PackageProductInfo
+			var page []map[string]interface{}
 			if err := json.Unmarshal(raw, &page); err != nil {
 				return err
 			}
@@ -413,8 +407,8 @@ func runListProducts(cmd *cobra.Command, args []string) error {
 	}
 
 	var resp struct {
-		Items    []PackageProductInfo `json:"items"`
-		NextPage string              `json:"next_page,omitempty"`
+		Items    []map[string]interface{} `json:"items"`
+		NextPage string                   `json:"next_page,omitempty"`
 	}
 	if err := client.Get(ctx, path+query, &resp); err != nil {
 		return err

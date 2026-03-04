@@ -84,7 +84,7 @@ type ProductInfo struct {
 	StoreIdentifier string `json:"store_identifier"`
 	Type            string `json:"type"`
 	AppID           string `json:"app_id,omitempty"`
-	CreatedAt       string `json:"created_at,omitempty"`
+	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
 func parseTimeout() time.Duration {

@@ -111,7 +111,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 type PaywallInfo struct {
 	ID        string `json:"id"`
-	CreatedAt string `json:"created_at,omitempty"`
+	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
 func runList(cmd *cobra.Command, args []string) error {

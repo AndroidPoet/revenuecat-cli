@@ -97,9 +97,9 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 			ctx, cancel := client.Context()
 			defer cancel()
 
-			var project map[string]interface{}
-			path := fmt.Sprintf("/projects/%s", projectID)
-			if err := client.Get(ctx, path, &project); err != nil {
+			var resp map[string]interface{}
+			path := fmt.Sprintf("/projects/%s/apps?limit=1", projectID)
+			if err := client.Get(ctx, path, &resp); err != nil {
 				results = append(results, checkResult{
 					Check:  "API Connectivity",
 					Status: "FAIL",
