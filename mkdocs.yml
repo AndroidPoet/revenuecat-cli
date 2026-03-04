@@ -1,0 +1,87 @@
+site_name: RevenueCat CLI
+site_url: https://androidpoet.github.io/revenuecat-cli
+site_description: AI-powered subscription management companion for the command line
+site_author: AndroidPoet
+repo_url: https://github.com/AndroidPoet/revenuecat-cli
+repo_name: AndroidPoet/revenuecat-cli
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Configuration: getting-started/configuration.md
+    - Quick Start: getting-started/quickstart.md
+  - Commands:
+    - Projects: commands/projects.md
+    - Apps: commands/apps.md
+    - Products: commands/products.md
+    - Entitlements: commands/entitlements.md
+    - Offerings: commands/offerings.md
+    - Packages: commands/packages.md
+    - Customers: commands/customers.md
+    - Subscriptions: commands/subscriptions.md
+    - Purchases: commands/purchases.md
+    - Paywalls: commands/paywalls.md
+    - Metrics: commands/metrics.md
+    - Webhooks: commands/webhooks.md
+    - Audit Logs: commands/audit-logs.md
+    - Auth: commands/auth.md
+  - Reference:
+    - Output Formats: reference/output-formats.md
+    - Pagination: reference/pagination.md
+    - Environment Variables: reference/environment-variables.md
+    - Shell Completion: reference/shell-completion.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/AndroidPoet/revenuecat-cli

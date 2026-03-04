@@ -19,5 +19,8 @@ coverage.html
 .DS_Store
 Thumbs.db
 
+# Docs build
+site/
+
 # Config (don't commit user configs)
 .rc.yaml
