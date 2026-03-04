@@ -7,7 +7,7 @@
 <br>
 <br>
 
-**Manage in-app subscriptions from your terminal.**
+**Your AI-powered subscription management companion for the command line.**
 
 <br>
 
