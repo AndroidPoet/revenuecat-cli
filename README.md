@@ -17,7 +17,7 @@
 &nbsp;
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
 &nbsp;
-[![MIT](https://img.shields.io/badge/License-MIT-F5A623?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-F5A623?style=for-the-badge)](LICENSE)
 
 </div>
 
@@ -34,17 +34,19 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 ## Setup
 
 ```bash
-# 1. Login with your RevenueCat API v2 secret key
 rc auth login --api-key sk_your_key_here
-
-# 2. Set your project
 rc init --project proj_your_project_id
-
-# 3. Verify
 rc doctor
 ```
 
 ## Commands
+
+### Projects
+
+```bash
+rc projects list
+rc projects create --name "My Project"
+```
 
 ### Apps
 
@@ -61,7 +63,9 @@ rc apps api-keys --app-id app_xxx
 
 ```bash
 rc products list
+rc products get --product-id prod_xxx
 rc products create --store-identifier com.app.monthly --type subscription --app-id app_xxx
+rc products delete --product-id prod_xxx --confirm
 ```
 
 ### Entitlements
@@ -81,16 +85,22 @@ rc entitlements detach-products --entitlement-id entl_xxx --product-ids prod1
 
 ```bash
 rc offerings list
+rc offerings get --offering-id ofrngs_xxx
 rc offerings create --lookup-key default --display-name "Default Offering"
 rc offerings update --offering-id ofrngs_xxx --is-current
 rc offerings update --offering-id ofrngs_xxx --metadata '{"theme":"dark"}'
+rc offerings delete --offering-id ofrngs_xxx --confirm
 ```
 
 ### Packages
 
 ```bash
 rc packages list --offering-id ofrngs_xxx
+rc packages get --package-id pkg_xxx
 rc packages create --offering-id ofrngs_xxx --lookup-key monthly --display-name "Monthly"
+rc packages update --package-id pkg_xxx --display-name "Monthly Plan"
+rc packages delete --package-id pkg_xxx --confirm
+rc packages list-products --package-id pkg_xxx
 rc packages attach-products --package-id pkg_xxx --product-ids prod1,prod2
 rc packages detach-products --package-id pkg_xxx --product-ids prod1
 ```
@@ -98,14 +108,66 @@ rc packages detach-products --package-id pkg_xxx --product-ids prod1
 ### Customers
 
 ```bash
+rc customers list
 rc customers get --customer-id user_xxx
+rc customers create --customer-id user_xxx
 rc customers delete --customer-id user_xxx --confirm
+rc customers list-active-entitlements --customer-id user_xxx
+rc customers list-subscriptions --customer-id user_xxx
+rc customers list-purchases --customer-id user_xxx
+rc customers list-invoices --customer-id user_xxx
+rc customers list-aliases --customer-id user_xxx
+rc customers list-attributes --customer-id user_xxx
+rc customers set-attributes --customer-id user_xxx --attributes '{"key":"value"}'
+rc customers transfer --customer-id user_xxx --target-id user_yyy
+rc customers grant-entitlement --customer-id user_xxx --entitlement-id entl_xxx
+rc customers revoke-entitlement --customer-id user_xxx --entitlement-id entl_xxx
+rc customers assign-offering --customer-id user_xxx --offering-id ofrngs_xxx
+```
+
+### Subscriptions
+
+```bash
+rc subscriptions get --subscription-id sub_xxx
+rc subscriptions list-entitlements --subscription-id sub_xxx
+rc subscriptions cancel --subscription-id sub_xxx --confirm
+rc subscriptions refund --subscription-id sub_xxx --confirm
+```
+
+### Purchases
+
+```bash
+rc purchases get --purchase-id pur_xxx
+rc purchases list-entitlements --purchase-id pur_xxx
+rc purchases refund --purchase-id pur_xxx --confirm
 ```
 
 ### Paywalls
 
 ```bash
+rc paywalls list
+rc paywalls get --paywall-id pw_xxx
 rc paywalls create --offering-id ofrngs_xxx
+rc paywalls delete --paywall-id pw_xxx --confirm
+```
+
+### Metrics
+
+```bash
+rc metrics overview
+```
+
+### Webhooks
+
+```bash
+rc webhooks list
+rc webhooks create --url https://example.com/webhook
+```
+
+### Audit Logs
+
+```bash
+rc audit-logs list
 ```
 
 ### Auth
@@ -147,17 +209,6 @@ rc products list --limit 50
 rc products list --starting-after prod_xxx
 rc products list --all
 ```
-
-## Environment Variables
-
-| Variable | Description |
-|:---------|:------------|
-| `RC_API_KEY` | API v2 secret key |
-| `RC_PROJECT` | Project ID |
-| `RC_PROFILE` | Auth profile |
-| `RC_OUTPUT` | Output format |
-| `RC_DEBUG` | Log HTTP requests |
-| `RC_TIMEOUT` | Request timeout |
 
 ## Contributing
 

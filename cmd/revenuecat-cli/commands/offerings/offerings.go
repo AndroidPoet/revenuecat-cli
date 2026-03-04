@@ -48,6 +48,18 @@ var updateCmd = &cobra.Command{
 	RunE:  runUpdate,
 }
 
+var getCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get offering details",
+	RunE:  runGet,
+}
+
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete an offering",
+	RunE:  runDelete,
+}
+
 func init() {
 	listCmd.Flags().IntVar(&limit, "limit", 20, "number of results per page")
 	listCmd.Flags().StringVar(&startAfter, "starting-after", "", "cursor for pagination")
@@ -65,9 +77,19 @@ func init() {
 	updateCmd.Flags().StringVar(&metadata, "metadata", "", "JSON metadata string")
 	updateCmd.MarkFlagRequired("offering-id")
 
+	getCmd.Flags().StringVar(&offeringID, "offering-id", "", "offering ID")
+	getCmd.MarkFlagRequired("offering-id")
+
+	var confirm bool
+	deleteCmd.Flags().StringVar(&offeringID, "offering-id", "", "offering ID")
+	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
+	deleteCmd.MarkFlagRequired("offering-id")
+
 	OfferingsCmd.AddCommand(listCmd)
 	OfferingsCmd.AddCommand(createCmd)
 	OfferingsCmd.AddCommand(updateCmd)
+	OfferingsCmd.AddCommand(getCmd)
+	OfferingsCmd.AddCommand(deleteCmd)
 }
 
 type OfferingInfo struct {
@@ -218,4 +240,49 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	output.PrintSuccess("Offering '%s' updated successfully", offeringID)
 	return output.Print(offering)
+}
+
+func runGet(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	var offering OfferingInfo
+	path := fmt.Sprintf("/projects/%s/offerings/%s", client.GetProjectID(), offeringID)
+	if err := client.Get(ctx, path, &offering); err != nil {
+		return err
+	}
+	return output.Print(offering)
+}
+
+func runDelete(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+	if err := cli.CheckConfirm(cmd); err != nil {
+		return err
+	}
+	if cli.IsDryRun() {
+		output.PrintInfo("Dry run: would delete offering '%s'", offeringID)
+		return nil
+	}
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	path := fmt.Sprintf("/projects/%s/offerings/%s", client.GetProjectID(), offeringID)
+	if err := client.Delete(ctx, path); err != nil {
+		return err
+	}
+	output.PrintSuccess("Offering '%s' deleted", offeringID)
+	return nil
 }

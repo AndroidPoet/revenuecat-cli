@@ -54,6 +54,30 @@ var detachProductsCmd = &cobra.Command{
 	RunE:  runDetachProducts,
 }
 
+var getCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get package details",
+	RunE:  runGet,
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update a package",
+	RunE:  runUpdate,
+}
+
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a package",
+	RunE:  runDelete,
+}
+
+var listProductsCmd = &cobra.Command{
+	Use:   "list-products",
+	Short: "List products in a package",
+	RunE:  runListProducts,
+}
+
 func init() {
 	listCmd.Flags().StringVar(&offeringID, "offering-id", "", "offering ID")
 	listCmd.Flags().IntVar(&limit, "limit", 20, "number of results per page")
@@ -78,10 +102,32 @@ func init() {
 	detachProductsCmd.MarkFlagRequired("package-id")
 	detachProductsCmd.MarkFlagRequired("product-ids")
 
+	getCmd.Flags().StringVar(&packageID, "package-id", "", "package ID")
+	getCmd.MarkFlagRequired("package-id")
+
+	updateCmd.Flags().StringVar(&packageID, "package-id", "", "package ID")
+	updateCmd.Flags().StringVar(&displayName, "display-name", "", "new display name")
+	updateCmd.MarkFlagRequired("package-id")
+
+	var confirm bool
+	deleteCmd.Flags().StringVar(&packageID, "package-id", "", "package ID")
+	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
+	deleteCmd.MarkFlagRequired("package-id")
+
+	listProductsCmd.Flags().StringVar(&packageID, "package-id", "", "package ID")
+	listProductsCmd.Flags().IntVar(&limit, "limit", 20, "number of results per page")
+	listProductsCmd.Flags().StringVar(&startAfter, "starting-after", "", "cursor for pagination")
+	listProductsCmd.Flags().BoolVar(&allPages, "all", false, "fetch all pages")
+	listProductsCmd.MarkFlagRequired("package-id")
+
 	PackagesCmd.AddCommand(listCmd)
 	PackagesCmd.AddCommand(createCmd)
 	PackagesCmd.AddCommand(attachProductsCmd)
 	PackagesCmd.AddCommand(detachProductsCmd)
+	PackagesCmd.AddCommand(getCmd)
+	PackagesCmd.AddCommand(updateCmd)
+	PackagesCmd.AddCommand(deleteCmd)
+	PackagesCmd.AddCommand(listProductsCmd)
 }
 
 type PackageInfo struct {
@@ -244,4 +290,139 @@ func runDetachProducts(cmd *cobra.Command, args []string) error {
 
 	output.PrintSuccess("Detached %d products from package '%s'", len(productIDs), packageID)
 	return nil
+}
+
+func runGet(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	var pkg PackageInfo
+	path := fmt.Sprintf("/projects/%s/packages/%s", client.GetProjectID(), packageID)
+	if err := client.Get(ctx, path, &pkg); err != nil {
+		return err
+	}
+	return output.Print(pkg)
+}
+
+func runUpdate(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+
+	if cli.IsDryRun() {
+		output.PrintInfo("Dry run: would update package '%s'", packageID)
+		return nil
+	}
+
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	body := map[string]interface{}{}
+	if displayName != "" {
+		body["display_name"] = displayName
+	}
+
+	var pkg PackageInfo
+	path := fmt.Sprintf("/projects/%s/packages/%s", client.GetProjectID(), packageID)
+	if err := client.Post(ctx, path, body, &pkg); err != nil {
+		return err
+	}
+
+	output.PrintSuccess("Package '%s' updated successfully", packageID)
+	return output.Print(pkg)
+}
+
+func runDelete(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+	if err := cli.CheckConfirm(cmd); err != nil {
+		return err
+	}
+	if cli.IsDryRun() {
+		output.PrintInfo("Dry run: would delete package '%s'", packageID)
+		return nil
+	}
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	path := fmt.Sprintf("/projects/%s/packages/%s", client.GetProjectID(), packageID)
+	if err := client.Delete(ctx, path); err != nil {
+		return err
+	}
+	output.PrintSuccess("Package '%s' deleted", packageID)
+	return nil
+}
+
+type PackageProductInfo struct {
+	ID              string `json:"id"`
+	StoreIdentifier string `json:"store_identifier"`
+	Type            string `json:"type"`
+}
+
+func runListProducts(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	path := fmt.Sprintf("/projects/%s/packages/%s/products", client.GetProjectID(), packageID)
+
+	if allPages {
+		var items []PackageProductInfo
+		err := client.ListAll(ctx, path, limit, func(raw json.RawMessage) error {
+			var page []PackageProductInfo
+			if err := json.Unmarshal(raw, &page); err != nil {
+				return err
+			}
+			items = append(items, page...)
+			return nil
+		})
+		if err != nil {
+			return err
+		}
+		return output.Print(items)
+	}
+
+	query := fmt.Sprintf("?limit=%d", limit)
+	if startAfter != "" {
+		query += "&starting_after=" + startAfter
+	}
+
+	var resp struct {
+		Items    []PackageProductInfo `json:"items"`
+		NextPage string              `json:"next_page,omitempty"`
+	}
+	if err := client.Get(ctx, path+query, &resp); err != nil {
+		return err
+	}
+
+	if resp.NextPage != "" {
+		output.PrintInfo("More results available. Use --starting-after=%s for next page, or --all for everything.", resp.NextPage)
+	}
+
+	return output.Print(resp.Items)
 }

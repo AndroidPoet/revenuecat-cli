@@ -65,6 +65,7 @@ brews:
       owner: AndroidPoet
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    folder: Formula
     homepage: https://github.com/AndroidPoet/revenuecat-cli
     description: "Fast, lightweight, and scriptable CLI for RevenueCat"
     license: MIT

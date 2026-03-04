@@ -16,6 +16,7 @@ var (
 	storeIdentifier string
 	productType     string
 	appID           string
+	productID       string
 	limit           int
 	startAfter      string
 	allPages        bool
@@ -40,6 +41,18 @@ var createCmd = &cobra.Command{
 	RunE:  runCreate,
 }
 
+var getCmd = &cobra.Command{
+	Use:   "get",
+	Short: "Get product details",
+	RunE:  runGet,
+}
+
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a product",
+	RunE:  runDelete,
+}
+
 func init() {
 	listCmd.Flags().IntVar(&limit, "limit", 20, "number of results per page")
 	listCmd.Flags().StringVar(&startAfter, "starting-after", "", "cursor for pagination")
@@ -52,8 +65,18 @@ func init() {
 	createCmd.MarkFlagRequired("type")
 	createCmd.MarkFlagRequired("app-id")
 
+	getCmd.Flags().StringVar(&productID, "product-id", "", "product ID")
+	getCmd.MarkFlagRequired("product-id")
+
+	var confirm bool
+	deleteCmd.Flags().StringVar(&productID, "product-id", "", "product ID")
+	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
+	deleteCmd.MarkFlagRequired("product-id")
+
 	ProductsCmd.AddCommand(listCmd)
 	ProductsCmd.AddCommand(createCmd)
+	ProductsCmd.AddCommand(getCmd)
+	ProductsCmd.AddCommand(deleteCmd)
 }
 
 type ProductInfo struct {
@@ -155,4 +178,49 @@ func runCreate(cmd *cobra.Command, args []string) error {
 
 	output.PrintSuccess("Product '%s' created successfully", storeIdentifier)
 	return output.Print(product)
+}
+
+func runGet(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	var product ProductInfo
+	path := fmt.Sprintf("/projects/%s/products/%s", client.GetProjectID(), productID)
+	if err := client.Get(ctx, path, &product); err != nil {
+		return err
+	}
+	return output.Print(product)
+}
+
+func runDelete(cmd *cobra.Command, args []string) error {
+	if err := cli.RequireProject(cmd); err != nil {
+		return err
+	}
+	if err := cli.CheckConfirm(cmd); err != nil {
+		return err
+	}
+	if cli.IsDryRun() {
+		output.PrintInfo("Dry run: would delete product '%s'", productID)
+		return nil
+	}
+	client, err := api.NewClient(cli.GetProjectID(), parseTimeout())
+	if err != nil {
+		return err
+	}
+	ctx, cancel := client.Context()
+	defer cancel()
+
+	path := fmt.Sprintf("/projects/%s/products/%s", client.GetProjectID(), productID)
+	if err := client.Delete(ctx, path); err != nil {
+		return err
+	}
+	output.PrintSuccess("Product '%s' deleted", productID)
+	return nil
 }
