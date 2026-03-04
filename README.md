@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="RevenueCat CLI" width="150">
+<img src="assets/logo.png" alt="RevenueCat CLI" width="400">
 
 # RevenueCat CLI
 
