@@ -2,6 +2,7 @@ package commands
 
 import (
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/apps"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/charts"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/auditlogs"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/auth"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/completion"
@@ -49,4 +50,5 @@ func init() {
 	rootCmd.AddCommand(exportcmd.ExportCmd)
 	rootCmd.AddCommand(exportcmd.ImportCmd)
 	rootCmd.AddCommand(report.ReportCmd)
+	rootCmd.AddCommand(charts.ChartsCmd)
 }

@@ -33,7 +33,7 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 
 ## Command Overview
 
-> **70+ commands** across **14 resource groups** covering the full RevenueCat API v2.
+> **80+ commands** across **15 resource groups** covering the full RevenueCat API v2.
 
 | Category | Commands | What you can do |
 |:---------|:---------|:----------------|
@@ -50,6 +50,7 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 | **Metrics** | `overview` | MRR, active subscribers, trials, revenue |
 | **Webhooks** | `list` `create` | Set up webhook integrations |
 | **Audit Logs** | `list` | Track changes and access history |
+| **Charts** | `list` `get` `options` `export` | 21 chart types with SVG visual export |
 | **Auth** | `login` `switch` `list` `current` `delete` | Manage API key profiles |
 
 ## New in v0.3.0
@@ -237,9 +238,25 @@ rc import --file my-project.yaml --dry-run      # Preview import
 
 ```bash
 rc report                                       # HTML report (open in browser, print to PDF)
+rc report --format pdf                          # Direct PDF export
 rc report --format json --file report.json      # Full data as JSON
 rc report --format yaml --file report.yaml      # Full data as YAML
 ```
+
+### Charts & Analytics
+
+```bash
+rc charts list                                  # List all 21 chart types
+rc charts get revenue --resolution month        # Fetch chart data
+rc charts get mrr --start-date 2024-01-01 --end-date 2024-12-31
+rc charts options revenue                       # Discover filters, segments, resolutions
+rc charts export --format html                  # Visual SVG chart report
+rc charts export --format pdf                   # PDF chart report
+rc charts export --format csv                   # Flat CSV for spreadsheets
+rc charts export --charts revenue,mrr,actives   # Custom chart selection
+```
+
+Available charts: `revenue`, `mrr`, `arr`, `actives`, `trials`, `churn`, `refund_rate`, `ltv_per_customer`, `subscription_retention`, `trial_conversion_rate`, and 11 more.
 
 ### Diff
 
@@ -276,7 +293,7 @@ Show me the current MRR and active subscriber count
 Look up customer user_123 and list their active entitlements
 ```
 
-[Browse all 8 skills →](https://github.com/AndroidPoet/revenuecat-cli-skills)
+[Browse all 10 skills →](https://github.com/AndroidPoet/revenuecat-cli-skills)
 
 ---
 
