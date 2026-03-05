@@ -18,6 +18,7 @@ import (
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/products"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/projects"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/purchases"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/report"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/status"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/subscriptions"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/watch"
@@ -47,4 +48,5 @@ func init() {
 	rootCmd.AddCommand(diff.DiffCmd)
 	rootCmd.AddCommand(exportcmd.ExportCmd)
 	rootCmd.AddCommand(exportcmd.ImportCmd)
+	rootCmd.AddCommand(report.ReportCmd)
 }

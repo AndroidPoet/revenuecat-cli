@@ -60,6 +60,7 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 | **Live Watch** | `rc watch metrics` | Auto-refreshing terminal metrics dashboard |
 | **Project Diff** | `rc diff --source A --target B` | Compare entitlements and offerings between projects |
 | **Export/Import** | `rc export` / `rc import` | Backup and migrate project configuration as YAML |
+| **Full Report** | `rc report` | Export entire project data as HTML (PDF-ready), JSON, or YAML |
 | **Dynamic Completion** | Tab on `--app-id`, `--product-id`, etc. | Live API-powered shell completions |
 | **Colored Output** | Automatic | Green checkmarks, cyan info, red errors |
 | **CI Pipeline** | GitHub Actions | Build, test, lint on every push |
@@ -230,6 +231,14 @@ rc watch metrics --interval 10s                 # Custom refresh interval
 rc export --file my-project.yaml                # Export config to YAML
 rc import --file my-project.yaml --confirm      # Import config from YAML
 rc import --file my-project.yaml --dry-run      # Preview import
+```
+
+### Report
+
+```bash
+rc report                                       # HTML report (open in browser, print to PDF)
+rc report --format json --file report.json      # Full data as JSON
+rc report --format yaml --file report.yaml      # Full data as YAML
 ```
 
 ### Diff
