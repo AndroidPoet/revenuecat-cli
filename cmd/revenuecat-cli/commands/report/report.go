@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"runtime"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -30,8 +33,8 @@ var ReportCmd = &cobra.Command{
 }
 
 func init() {
-	ReportCmd.Flags().StringVar(&reportFile, "file", "rc-report.html", "output file path")
-	ReportCmd.Flags().StringVar(&reportFormat, "format", "html", "output format: html, json, yaml")
+	ReportCmd.Flags().StringVar(&reportFile, "file", "", "output file path (default: rc-report.{format})")
+	ReportCmd.Flags().StringVar(&reportFormat, "format", "html", "output format: html, json, yaml, pdf")
 }
 
 // --- Data types ---
@@ -261,6 +264,20 @@ func runReport(cmd *cobra.Command, args []string) error {
 	report.Summary.TotalOfferings = len(report.Offerings)
 	report.Summary.TotalPackages = totalPkgs
 
+	// Set default filename based on format
+	if reportFile == "" {
+		switch reportFormat {
+		case "pdf":
+			reportFile = "rc-report.pdf"
+		case "json":
+			reportFile = "rc-report.json"
+		case "yaml":
+			reportFile = "rc-report.yaml"
+		default:
+			reportFile = "rc-report.html"
+		}
+	}
+
 	// Write output
 	switch reportFormat {
 	case "json":
@@ -290,8 +307,17 @@ func runReport(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("writing file: %w", err)
 		}
 
+	case "pdf":
+		html, err := renderHTML(report)
+		if err != nil {
+			return fmt.Errorf("rendering HTML: %w", err)
+		}
+		if err := htmlToPDF(html, reportFile); err != nil {
+			return err
+		}
+
 	default:
-		return fmt.Errorf("unsupported format: %s (use html, json, or yaml)", reportFormat)
+		return fmt.Errorf("unsupported format: %s (use html, json, yaml, or pdf)", reportFormat)
 	}
 
 	output.PrintSuccess("Report saved to %s", reportFile)
@@ -348,6 +374,89 @@ func renderHTML(report ProjectReport) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+// htmlToPDF converts HTML to PDF using Chrome/Chromium headless
+func htmlToPDF(html, pdfPath string) error {
+	chromePath := findChrome()
+	if chromePath == "" {
+		return fmt.Errorf("PDF export requires Chrome or Chromium.\nInstall Chrome, or use --format html and print to PDF from your browser")
+	}
+
+	// Write HTML to temp file
+	tmpFile, err := os.CreateTemp("", "rc-report-*.html")
+	if err != nil {
+		return fmt.Errorf("creating temp file: %w", err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	if _, err := tmpFile.WriteString(html); err != nil {
+		tmpFile.Close()
+		return fmt.Errorf("writing temp file: %w", err)
+	}
+	tmpFile.Close()
+
+	// Convert absolute path for the PDF output
+	absPDF, err := filepath.Abs(pdfPath)
+	if err != nil {
+		absPDF = pdfPath
+	}
+
+	// Run Chrome headless
+	cmd := exec.Command(chromePath,
+		"--headless",
+		"--disable-gpu",
+		"--no-sandbox",
+		"--print-to-pdf="+absPDF,
+		"--print-to-pdf-no-header",
+		tmpFile.Name(),
+	)
+	cmd.Stderr = nil
+	cmd.Stdout = nil
+
+	output.PrintInfo("Generating PDF...")
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("Chrome PDF conversion failed: %w\nTry: rc report --format html, then print to PDF from browser", err)
+	}
+
+	return nil
+}
+
+// findChrome locates Chrome/Chromium binary on the system
+func findChrome() string {
+	switch runtime.GOOS {
+	case "darwin":
+		paths := []string{
+			"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+			"/Applications/Chromium.app/Contents/MacOS/Chromium",
+			"/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+			"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+		}
+		for _, p := range paths {
+			if _, err := os.Stat(p); err == nil {
+				return p
+			}
+		}
+	case "linux":
+		names := []string{"google-chrome", "google-chrome-stable", "chromium", "chromium-browser"}
+		for _, name := range names {
+			if p, err := exec.LookPath(name); err == nil {
+				return p
+			}
+		}
+	case "windows":
+		paths := []string{
+			filepath.Join(os.Getenv("PROGRAMFILES"), "Google", "Chrome", "Application", "chrome.exe"),
+			filepath.Join(os.Getenv("PROGRAMFILES(X86)"), "Google", "Chrome", "Application", "chrome.exe"),
+			filepath.Join(os.Getenv("LOCALAPPDATA"), "Google", "Chrome", "Application", "chrome.exe"),
+		}
+		for _, p := range paths {
+			if _, err := os.Stat(p); err == nil {
+				return p
+			}
+		}
+	}
+	return ""
 }
 
 const htmlTemplate = `<!DOCTYPE html>
