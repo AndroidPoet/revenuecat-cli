@@ -33,7 +33,7 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 
 ## Command Overview
 
-> **65+ commands** across **14 resource groups** covering the full RevenueCat API v2.
+> **70+ commands** across **14 resource groups** covering the full RevenueCat API v2.
 
 | Category | Commands | What you can do |
 |:---------|:---------|:----------------|
@@ -52,7 +52,21 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 | **Audit Logs** | `list` | Track changes and access history |
 | **Auth** | `login` `switch` `list` `current` `delete` | Manage API key profiles |
 
+## New in v0.3.0
+
+| Feature | Command | Description |
+|:--------|:--------|:------------|
+| **Status Dashboard** | `rc status` | One-command overview of your entire project |
+| **Live Watch** | `rc watch metrics` | Auto-refreshing terminal metrics dashboard |
+| **Project Diff** | `rc diff --source A --target B` | Compare entitlements and offerings between projects |
+| **Export/Import** | `rc export` / `rc import` | Backup and migrate project configuration as YAML |
+| **Dynamic Completion** | Tab on `--app-id`, `--product-id`, etc. | Live API-powered shell completions |
+| **Colored Output** | Automatic | Green checkmarks, cyan info, red errors |
+| **CI Pipeline** | GitHub Actions | Build, test, lint on every push |
+
 ## Setup
+
+> Get your API key at [app.revenuecat.com/settings/api-keys](https://app.revenuecat.com/settings/api-keys)
 
 ```bash
 rc auth login --api-key sk_your_key_here
@@ -200,6 +214,28 @@ rc auth switch --name staging
 rc auth list
 rc auth current
 rc auth delete --name old --confirm
+```
+
+### Status & Watch
+
+```bash
+rc status                                       # Project dashboard
+rc watch metrics                                # Live metrics (Ctrl+C to stop)
+rc watch metrics --interval 10s                 # Custom refresh interval
+```
+
+### Export & Import
+
+```bash
+rc export --file my-project.yaml                # Export config to YAML
+rc import --file my-project.yaml --confirm      # Import config from YAML
+rc import --file my-project.yaml --dry-run      # Preview import
+```
+
+### Diff
+
+```bash
+rc diff --source proj_staging --target proj_prod  # Compare two projects
 ```
 
 ### Utilities

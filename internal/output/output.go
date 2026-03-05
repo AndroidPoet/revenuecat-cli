@@ -25,6 +25,16 @@ const (
 	FormatYAML    Format = "yaml"
 )
 
+// ANSI color codes for terminal output
+const (
+	colorReset  = "\033[0m"
+	colorRed    = "\033[31m"
+	colorGreen  = "\033[32m"
+	colorYellow = "\033[33m"
+	colorCyan   = "\033[36m"
+	colorBold   = "\033[1m"
+)
+
 var (
 	currentFormat Format
 	prettyPrint   bool
@@ -67,26 +77,28 @@ func Print(data interface{}) error {
 // PrintSuccess prints a success message (respects quiet mode)
 func PrintSuccess(format string, args ...interface{}) {
 	if !quietMode {
-		fmt.Fprintf(writer, format+"\n", args...)
+		msg := fmt.Sprintf(format, args...)
+		fmt.Fprintf(writer, "%s%s\u2713 %s%s\n", colorBold, colorGreen, msg, colorReset)
 	}
 }
 
 // PrintInfo prints an info message (respects quiet mode)
 func PrintInfo(format string, args ...interface{}) {
 	if !quietMode {
-		fmt.Fprintf(writer, format+"\n", args...)
+		msg := fmt.Sprintf(format, args...)
+		fmt.Fprintf(writer, "%s%s%s\n", colorCyan, msg, colorReset)
 	}
 }
 
 // PrintError prints an error message (always shown)
 func PrintError(format string, args ...interface{}) {
-	fmt.Fprintf(os.Stderr, "Error: "+format+"\n", args...)
+	fmt.Fprintf(os.Stderr, "%s%s\u2717 Error: %s%s\n", colorBold, colorRed, fmt.Sprintf(format, args...), colorReset)
 }
 
 // PrintWarning prints a warning message
 func PrintWarning(format string, args ...interface{}) {
 	if !quietMode {
-		fmt.Fprintf(os.Stderr, "Warning: "+format+"\n", args...)
+		fmt.Fprintf(os.Stderr, "%s\u26a0 Warning: %s%s\n", colorYellow, fmt.Sprintf(format, args...), colorReset)
 	}
 }
 
@@ -128,7 +140,7 @@ func printTable(data interface{}) error {
 		}
 
 		headers := getStructHeaders(first)
-		fmt.Fprintln(w, strings.Join(headers, "\t"))
+		fmt.Fprintf(w, "%s%s%s\n", colorBold, strings.Join(headers, "\t"), colorReset)
 		fmt.Fprintln(w, strings.Repeat("-\t", len(headers)))
 
 		// Print rows

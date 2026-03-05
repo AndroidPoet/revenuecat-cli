@@ -9,6 +9,7 @@ import (
 
 	"github.com/AndroidPoet/revenuecat-cli/internal/api"
 	"github.com/AndroidPoet/revenuecat-cli/internal/cli"
+	"github.com/AndroidPoet/revenuecat-cli/internal/completion"
 	"github.com/AndroidPoet/revenuecat-cli/internal/output"
 )
 
@@ -64,14 +65,17 @@ func init() {
 	createCmd.MarkFlagRequired("store-identifier")
 	createCmd.MarkFlagRequired("type")
 	createCmd.MarkFlagRequired("app-id")
+	createCmd.RegisterFlagCompletionFunc("app-id", completion.AppIDs())
 
 	getCmd.Flags().StringVar(&productID, "product-id", "", "product ID")
 	getCmd.MarkFlagRequired("product-id")
+	getCmd.RegisterFlagCompletionFunc("product-id", completion.ProductIDs())
 
 	var confirm bool
 	deleteCmd.Flags().StringVar(&productID, "product-id", "", "product ID")
 	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
 	deleteCmd.MarkFlagRequired("product-id")
+	deleteCmd.RegisterFlagCompletionFunc("product-id", completion.ProductIDs())
 
 	ProductsCmd.AddCommand(listCmd)
 	ProductsCmd.AddCommand(createCmd)

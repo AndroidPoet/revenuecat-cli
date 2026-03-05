@@ -28,6 +28,9 @@ var loginCmd = &cobra.Command{
 	Short: "Configure authentication credentials",
 	Long: `Configure API key credentials for a profile.
 
+Get your API key from the RevenueCat dashboard:
+  https://app.revenuecat.com/settings/api-keys
+
 Examples:
   rc auth login --api-key sk_xxxx
   rc auth login --api-key sk_xxxx --name production --default-project proj_xxxx`,

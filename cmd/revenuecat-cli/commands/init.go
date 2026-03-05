@@ -6,8 +6,10 @@ import (
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/auth"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/completion"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/customers"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/diff"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/doctor"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/entitlements"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/exportcmd"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/initcmd"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/metrics"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/offerings"
@@ -16,7 +18,9 @@ import (
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/products"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/projects"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/purchases"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/status"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/subscriptions"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/watch"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/webhooks"
 )
 
@@ -38,4 +42,9 @@ func init() {
 	rootCmd.AddCommand(completion.CompletionCmd)
 	rootCmd.AddCommand(doctor.DoctorCmd)
 	rootCmd.AddCommand(initcmd.InitCmd)
+	rootCmd.AddCommand(status.StatusCmd)
+	rootCmd.AddCommand(watch.WatchCmd)
+	rootCmd.AddCommand(diff.DiffCmd)
+	rootCmd.AddCommand(exportcmd.ExportCmd)
+	rootCmd.AddCommand(exportcmd.ImportCmd)
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/AndroidPoet/revenuecat-cli/internal/api"
 	"github.com/AndroidPoet/revenuecat-cli/internal/cli"
+	"github.com/AndroidPoet/revenuecat-cli/internal/completion"
 	"github.com/AndroidPoet/revenuecat-cli/internal/output"
 )
 
@@ -75,6 +76,7 @@ func init() {
 	// Get flags
 	getCmd.Flags().StringVar(&appID, "app-id", "", "app ID")
 	getCmd.MarkFlagRequired("app-id")
+	getCmd.RegisterFlagCompletionFunc("app-id", completion.AppIDs())
 
 	// Create flags
 	createCmd.Flags().StringVar(&appName, "name", "", "app name")
@@ -88,16 +90,19 @@ func init() {
 	updateCmd.Flags().StringVar(&appID, "app-id", "", "app ID")
 	updateCmd.Flags().StringVar(&appName, "name", "", "new app name")
 	updateCmd.MarkFlagRequired("app-id")
+	updateCmd.RegisterFlagCompletionFunc("app-id", completion.AppIDs())
 
 	// Delete flags
 	var confirm bool
 	deleteCmd.Flags().StringVar(&appID, "app-id", "", "app ID")
 	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
 	deleteCmd.MarkFlagRequired("app-id")
+	deleteCmd.RegisterFlagCompletionFunc("app-id", completion.AppIDs())
 
 	// API keys flags
 	apiKeysCmd.Flags().StringVar(&appID, "app-id", "", "app ID")
 	apiKeysCmd.MarkFlagRequired("app-id")
+	apiKeysCmd.RegisterFlagCompletionFunc("app-id", completion.AppIDs())
 
 	AppsCmd.AddCommand(listCmd)
 	AppsCmd.AddCommand(getCmd)

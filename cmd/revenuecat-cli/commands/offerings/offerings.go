@@ -9,6 +9,7 @@ import (
 
 	"github.com/AndroidPoet/revenuecat-cli/internal/api"
 	"github.com/AndroidPoet/revenuecat-cli/internal/cli"
+	"github.com/AndroidPoet/revenuecat-cli/internal/completion"
 	"github.com/AndroidPoet/revenuecat-cli/internal/output"
 )
 
@@ -76,14 +77,17 @@ func init() {
 	updateCmd.Flags().BoolVar(&isCurrent, "is-current", false, "set as current offering")
 	updateCmd.Flags().StringVar(&metadata, "metadata", "", "JSON metadata string")
 	updateCmd.MarkFlagRequired("offering-id")
+	updateCmd.RegisterFlagCompletionFunc("offering-id", completion.OfferingIDs())
 
 	getCmd.Flags().StringVar(&offeringID, "offering-id", "", "offering ID")
 	getCmd.MarkFlagRequired("offering-id")
+	getCmd.RegisterFlagCompletionFunc("offering-id", completion.OfferingIDs())
 
 	var confirm bool
 	deleteCmd.Flags().StringVar(&offeringID, "offering-id", "", "offering ID")
 	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
 	deleteCmd.MarkFlagRequired("offering-id")
+	deleteCmd.RegisterFlagCompletionFunc("offering-id", completion.OfferingIDs())
 
 	OfferingsCmd.AddCommand(listCmd)
 	OfferingsCmd.AddCommand(createCmd)

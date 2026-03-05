@@ -57,7 +57,7 @@ func runDoctor(cmd *cobra.Command, args []string) error {
 		results = append(results, checkResult{
 			Check:  "API Key",
 			Status: "FAIL",
-			Detail: err.Error(),
+			Detail: err.Error() + " — get one at https://app.revenuecat.com/settings/api-keys",
 		})
 	} else {
 		masked := apiKey[:6] + "..." + apiKey[len(apiKey)-4:]

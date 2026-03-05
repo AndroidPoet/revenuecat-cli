@@ -9,6 +9,7 @@ import (
 
 	"github.com/AndroidPoet/revenuecat-cli/internal/api"
 	"github.com/AndroidPoet/revenuecat-cli/internal/cli"
+	"github.com/AndroidPoet/revenuecat-cli/internal/completion"
 	"github.com/AndroidPoet/revenuecat-cli/internal/output"
 )
 
@@ -85,6 +86,7 @@ func init() {
 
 	getCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
 	getCmd.MarkFlagRequired("entitlement-id")
+	getCmd.RegisterFlagCompletionFunc("entitlement-id", completion.EntitlementIDs())
 
 	createCmd.Flags().StringVar(&lookupKey, "lookup-key", "", "entitlement lookup key")
 	createCmd.Flags().StringVar(&displayName, "display-name", "", "entitlement display name")
@@ -94,24 +96,29 @@ func init() {
 	updateCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
 	updateCmd.Flags().StringVar(&displayName, "display-name", "", "new display name")
 	updateCmd.MarkFlagRequired("entitlement-id")
+	updateCmd.RegisterFlagCompletionFunc("entitlement-id", completion.EntitlementIDs())
 	updateCmd.MarkFlagRequired("display-name")
 
 	var confirm bool
 	deleteCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
 	deleteCmd.Flags().BoolVar(&confirm, "confirm", false, "confirm deletion")
 	deleteCmd.MarkFlagRequired("entitlement-id")
+	deleteCmd.RegisterFlagCompletionFunc("entitlement-id", completion.EntitlementIDs())
 
 	listProductsCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
 	listProductsCmd.MarkFlagRequired("entitlement-id")
+	listProductsCmd.RegisterFlagCompletionFunc("entitlement-id", completion.EntitlementIDs())
 
 	attachProductsCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
 	attachProductsCmd.Flags().StringSliceVar(&productIDs, "product-ids", nil, "product IDs to attach")
 	attachProductsCmd.MarkFlagRequired("entitlement-id")
+	attachProductsCmd.RegisterFlagCompletionFunc("entitlement-id", completion.EntitlementIDs())
 	attachProductsCmd.MarkFlagRequired("product-ids")
 
 	detachProductsCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
 	detachProductsCmd.Flags().StringSliceVar(&productIDs, "product-ids", nil, "product IDs to detach")
 	detachProductsCmd.MarkFlagRequired("entitlement-id")
+	detachProductsCmd.RegisterFlagCompletionFunc("entitlement-id", completion.EntitlementIDs())
 	detachProductsCmd.MarkFlagRequired("product-ids")
 
 	EntitlementsCmd.AddCommand(listCmd)
