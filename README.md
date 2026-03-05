@@ -7,13 +7,13 @@
 <br>
 <br>
 
-**Your AI-powered subscription management companion for the command line.**
+**The command-line tool for RevenueCat — manage subscriptions, analyze charts, and export reports from your terminal.**
 
 <br>
 
 [![Release](https://img.shields.io/github/v/release/AndroidPoet/revenuecat-cli?style=for-the-badge&color=4B48F2&label=Latest)](https://github.com/AndroidPoet/revenuecat-cli/releases/latest)
 &nbsp;
-[![Downloads](https://img.shields.io/github/downloads/AndroidPoet/revenuecat-cli/total?style=for-the-badge&color=E8514A&v=1)](https://github.com/AndroidPoet/revenuecat-cli/releases)
+[![Downloads](https://img.shields.io/github/downloads/AndroidPoet/revenuecat-cli/total?style=for-the-badge&color=E8514A&v=2)](https://github.com/AndroidPoet/revenuecat-cli/releases)
 &nbsp;
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
 &nbsp;
@@ -31,29 +31,18 @@ brew tap AndroidPoet/tap && brew install revenuecat-cli
 
 Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releases/latest). After install, use `revenuecat-cli` or the alias `rc`.
 
-## Command Overview
+## What's New
 
-> **80+ commands** across **15 resource groups** covering the full RevenueCat API v2.
+### v0.4.0 — Charts & Analytics
 
-| Category | Commands | What you can do |
-|:---------|:---------|:----------------|
-| **Projects** | `list` `create` | Manage your RevenueCat projects |
-| **Apps** | `list` `get` `create` `update` `delete` `api-keys` | Configure app store connections |
-| **Products** | `list` `get` `create` `delete` | Define subscription and one-time products |
-| **Entitlements** | `list` `get` `create` `update` `delete` `attach-products` `detach-products` | Control access to premium features |
-| **Offerings** | `list` `get` `create` `update` `delete` | Group packages for remote configuration |
-| **Packages** | `list` `get` `create` `update` `delete` `attach-products` `detach-products` | Bundle products within offerings |
-| **Customers** | `list` `get` `create` `delete` + **11 more** | Full customer lifecycle management |
-| **Subscriptions** | `get` `list-entitlements` `cancel` `refund` | Manage active subscriptions |
-| **Purchases** | `get` `list-entitlements` `refund` | View and refund purchases |
-| **Paywalls** | `list` `get` `create` `delete` | Manage paywall configurations |
-| **Metrics** | `overview` | MRR, active subscribers, trials, revenue |
-| **Webhooks** | `list` `create` | Set up webhook integrations |
-| **Audit Logs** | `list` | Track changes and access history |
-| **Charts** | `list` `get` `options` `export` | 21 chart types with SVG visual export |
-| **Auth** | `login` `switch` `list` `current` `delete` | Manage API key profiles |
+| Feature | Command | Description |
+|:--------|:--------|:------------|
+| **21 Chart Types** | `rc charts list` | Revenue, MRR, ARR, churn, trials, LTV, retention, and more |
+| **Chart Data** | `rc charts get revenue` | Fetch time-series data with resolution, date range, currency, segments |
+| **Chart Options** | `rc charts options revenue` | Discover available filters, segments, and resolutions per chart |
+| **Visual Export** | `rc charts export --format pdf` | SVG chart reports as HTML, PDF, JSON, YAML, or CSV |
 
-## New in v0.3.0
+### v0.3.0 — Operations & Monitoring
 
 | Feature | Command | Description |
 |:--------|:--------|:------------|
@@ -61,10 +50,8 @@ Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releas
 | **Live Watch** | `rc watch metrics` | Auto-refreshing terminal metrics dashboard |
 | **Project Diff** | `rc diff --source A --target B` | Compare entitlements and offerings between projects |
 | **Export/Import** | `rc export` / `rc import` | Backup and migrate project configuration as YAML |
-| **Full Report** | `rc report` | Export entire project data as HTML (PDF-ready), JSON, or YAML |
+| **Full Report** | `rc report --format pdf` | Export entire project data as HTML, PDF, JSON, or YAML |
 | **Dynamic Completion** | Tab on `--app-id`, `--product-id`, etc. | Live API-powered shell completions |
-| **Colored Output** | Automatic | Green checkmarks, cyan info, red errors |
-| **CI Pipeline** | GitHub Actions | Build, test, lint on every push |
 
 ## Setup
 
@@ -75,6 +62,53 @@ rc auth login --api-key sk_your_key_here
 rc init --project proj_your_project_id
 rc doctor
 ```
+
+## Command Overview
+
+> **80+ commands** across **15 resource groups** covering the full RevenueCat API v2.
+
+| Category | Commands | What you can do |
+|:---------|:---------|:----------------|
+| **Charts** | `list` `get` `options` `export` | 21 chart types with SVG visual export |
+| **Projects** | `list` `create` | Manage your RevenueCat projects |
+| **Apps** | `list` `get` `create` `update` `delete` `api-keys` | Configure app store connections |
+| **Products** | `list` `get` `create` `delete` | Define subscription and one-time products |
+| **Entitlements** | `list` `get` `create` `update` `delete` `attach` `detach` | Control access to premium features |
+| **Offerings** | `list` `get` `create` `update` `delete` | Group packages for remote configuration |
+| **Packages** | `list` `get` `create` `update` `delete` `attach` `detach` | Bundle products within offerings |
+| **Customers** | `list` `get` `create` `delete` + **11 more** | Full customer lifecycle management |
+| **Subscriptions** | `get` `list-entitlements` `cancel` `refund` | Manage active subscriptions |
+| **Purchases** | `get` `list-entitlements` `refund` | View and refund purchases |
+| **Paywalls** | `list` `get` `create` `delete` | Manage paywall configurations |
+| **Metrics** | `overview` | MRR, active subscribers, trials, revenue |
+| **Webhooks** | `list` `create` | Set up webhook integrations |
+| **Audit Logs** | `list` | Track changes and access history |
+| **Auth** | `login` `switch` `list` `current` `delete` | Manage API key profiles |
+
+## Charts & Analytics
+
+Fetch, explore, and export visual analytics from all 21 RevenueCat chart types.
+
+```bash
+rc charts list                                  # List all 21 chart types
+rc charts get revenue --resolution month        # Fetch revenue data (monthly)
+rc charts get mrr --start-date 2024-01-01 --end-date 2024-12-31
+rc charts get churn --currency EUR --segment country
+rc charts options revenue                       # Discover filters, segments, resolutions
+```
+
+### Export visual reports
+
+```bash
+rc charts export --format html                  # SVG chart report (open in browser)
+rc charts export --format pdf                   # PDF via Chrome headless
+rc charts export --format csv                   # Flat CSV for spreadsheets
+rc charts export --format json                  # Structured JSON
+rc charts export --format yaml                  # YAML
+rc charts export --charts revenue,mrr,actives   # Custom chart selection
+```
+
+**Available charts:** `revenue` `mrr` `arr` `mrr_movement` `actives` `actives_movement` `actives_new` `trials` `trials_movement` `trials_new` `trial_conversion_rate` `conversion_to_paying` `churn` `refund_rate` `subscription_retention` `subscription_status` `customers_active` `customers_new` `ltv_per_customer` `ltv_per_paying_customer` `cohort_explorer`
 
 ## Commands
 
@@ -113,7 +147,6 @@ rc entitlements get --entitlement-id entl_xxx
 rc entitlements create --lookup-key premium --display-name "Premium"
 rc entitlements update --entitlement-id entl_xxx --display-name "Premium+"
 rc entitlements delete --entitlement-id entl_xxx --confirm
-rc entitlements list-products --entitlement-id entl_xxx
 rc entitlements attach-products --entitlement-id entl_xxx --product-ids prod1,prod2
 rc entitlements detach-products --entitlement-id entl_xxx --product-ids prod1
 ```
@@ -137,7 +170,6 @@ rc packages get --package-id pkg_xxx
 rc packages create --offering-id ofrngs_xxx --lookup-key monthly --display-name "Monthly"
 rc packages update --package-id pkg_xxx --display-name "Monthly Plan"
 rc packages delete --package-id pkg_xxx --confirm
-rc packages list-products --package-id pkg_xxx
 rc packages attach-products --package-id pkg_xxx --product-ids prod1,prod2
 rc packages detach-products --package-id pkg_xxx --product-ids prod1
 ```
@@ -145,7 +177,6 @@ rc packages detach-products --package-id pkg_xxx --product-ids prod1
 ### Customers
 
 ```bash
-rc customers list
 rc customers get --customer-id user_xxx
 rc customers create --customer-id user_xxx
 rc customers delete --customer-id user_xxx --confirm
@@ -153,29 +184,19 @@ rc customers list-active-entitlements --customer-id user_xxx
 rc customers list-subscriptions --customer-id user_xxx
 rc customers list-purchases --customer-id user_xxx
 rc customers list-invoices --customer-id user_xxx
-rc customers list-aliases --customer-id user_xxx
-rc customers list-attributes --customer-id user_xxx
 rc customers set-attributes --customer-id user_xxx --attributes '{"key":"value"}'
 rc customers transfer --customer-id user_xxx --target-id user_yyy
 rc customers grant-entitlement --customer-id user_xxx --entitlement-id entl_xxx
 rc customers revoke-entitlement --customer-id user_xxx --entitlement-id entl_xxx
-rc customers assign-offering --customer-id user_xxx --offering-id ofrngs_xxx
 ```
 
-### Subscriptions
+### Subscriptions & Purchases
 
 ```bash
 rc subscriptions get --subscription-id sub_xxx
-rc subscriptions list-entitlements --subscription-id sub_xxx
 rc subscriptions cancel --subscription-id sub_xxx --confirm
 rc subscriptions refund --subscription-id sub_xxx --confirm
-```
-
-### Purchases
-
-```bash
 rc purchases get --purchase-id pur_xxx
-rc purchases list-entitlements --purchase-id pur_xxx
 rc purchases refund --purchase-id pur_xxx --confirm
 ```
 
@@ -188,26 +209,34 @@ rc paywalls create --offering-id ofrngs_xxx
 rc paywalls delete --paywall-id pw_xxx --confirm
 ```
 
-### Metrics
+### Metrics & Status
 
 ```bash
-rc metrics overview
+rc metrics overview                             # MRR, subscribers, trials, revenue
+rc status                                       # Full project dashboard
+rc watch metrics                                # Live auto-refreshing metrics
+rc watch metrics --interval 10s                 # Custom refresh interval
 ```
 
-### Webhooks
+### Reports
 
 ```bash
-rc webhooks list
-rc webhooks create --url https://example.com/webhook
+rc report                                       # HTML project report
+rc report --format pdf                          # Direct PDF export
+rc report --format json --file report.json      # Structured JSON
+rc report --format yaml --file report.yaml      # YAML
 ```
 
-### Audit Logs
+### Export, Import & Diff
 
 ```bash
-rc audit-logs list
+rc export --file my-project.yaml                # Export config to YAML
+rc import --file my-project.yaml --dry-run      # Preview import
+rc import --file my-project.yaml --confirm      # Import config from YAML
+rc diff --source proj_staging --target proj_prod  # Compare two projects
 ```
 
-### Auth
+### Auth & Setup
 
 ```bash
 rc auth login --api-key sk_xxx --name production
@@ -216,86 +245,18 @@ rc auth switch --name staging
 rc auth list
 rc auth current
 rc auth delete --name old --confirm
+rc doctor                                       # Verify configuration
+rc init --project proj_xxx                      # Initialize project config
+rc completion zsh > "${fpath[1]}/_rc"           # Shell completions
 ```
 
-### Status & Watch
+### Webhooks & Audit
 
 ```bash
-rc status                                       # Project dashboard
-rc watch metrics                                # Live metrics (Ctrl+C to stop)
-rc watch metrics --interval 10s                 # Custom refresh interval
+rc webhooks list
+rc webhooks create --url https://example.com/webhook
+rc audit-logs list
 ```
-
-### Export & Import
-
-```bash
-rc export --file my-project.yaml                # Export config to YAML
-rc import --file my-project.yaml --confirm      # Import config from YAML
-rc import --file my-project.yaml --dry-run      # Preview import
-```
-
-### Report
-
-```bash
-rc report                                       # HTML report (open in browser, print to PDF)
-rc report --format pdf                          # Direct PDF export
-rc report --format json --file report.json      # Full data as JSON
-rc report --format yaml --file report.yaml      # Full data as YAML
-```
-
-### Charts & Analytics
-
-```bash
-rc charts list                                  # List all 21 chart types
-rc charts get revenue --resolution month        # Fetch chart data
-rc charts get mrr --start-date 2024-01-01 --end-date 2024-12-31
-rc charts options revenue                       # Discover filters, segments, resolutions
-rc charts export --format html                  # Visual SVG chart report
-rc charts export --format pdf                   # PDF chart report
-rc charts export --format csv                   # Flat CSV for spreadsheets
-rc charts export --charts revenue,mrr,actives   # Custom chart selection
-```
-
-Available charts: `revenue`, `mrr`, `arr`, `actives`, `trials`, `churn`, `refund_rate`, `ltv_per_customer`, `subscription_retention`, `trial_conversion_rate`, and 11 more.
-
-### Diff
-
-```bash
-rc diff --source proj_staging --target proj_prod  # Compare two projects
-```
-
-### Utilities
-
-```bash
-rc doctor
-rc init --project proj_xxx
-rc completion zsh > "${fpath[1]}/_rc"
-rc version
-```
-
-## Agent Skills
-
-Use `rc` with AI coding agents. Install the skill pack and your agent learns every command — products, entitlements, offerings, customers, metrics, and more.
-
-```bash
-npx skills add AndroidPoet/revenuecat-cli-skills
-```
-
-Then just ask:
-
-```
-Create a premium entitlement and attach my monthly subscription product
-```
-```
-Show me the current MRR and active subscriber count
-```
-```
-Look up customer user_123 and list their active entitlements
-```
-
-[Browse all 10 skills →](https://github.com/AndroidPoet/revenuecat-cli-skills)
-
----
 
 ## Output Formats
 
@@ -316,6 +277,28 @@ rc products list --limit 50
 rc products list --starting-after prod_xxx
 rc products list --all
 ```
+
+## Agent Skills
+
+Use `rc` with AI coding agents. Install the skill pack and your agent learns every command.
+
+```bash
+npx skills add AndroidPoet/revenuecat-cli-skills
+```
+
+Then just ask:
+
+```
+Export my revenue and MRR charts as a PDF report
+```
+```
+Show me the current MRR and active subscriber count
+```
+```
+Compare my staging and production project configurations
+```
+
+[Browse all 10 skills →](https://github.com/AndroidPoet/revenuecat-cli-skills)
 
 ## Contributing
 
