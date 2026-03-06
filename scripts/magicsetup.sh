@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ──────────────────────────────────────────────────────────────────────────────
-# setup-offerings.sh — One-click RevenueCat offerings setup
+# magicsetup — One-click RevenueCat offerings setup
 #
 # Interactive menu-driven setup that creates the full RevenueCat stack:
 # apps → products → entitlements → offerings → packages
@@ -15,9 +15,9 @@ set -euo pipefail
 #   - Dry-run mode to preview without creating
 #
 # Usage:
-#   ./scripts/setup-offerings.sh                     # Interactive menu
-#   ./scripts/setup-offerings.sh --config plan.yaml  # From config file
-#   ./scripts/setup-offerings.sh --dry-run            # Preview without creating
+#   rc magicsetup                     # Interactive menu
+#   rc magicsetup --config plan.yaml  # From config file
+#   rc magicsetup --dry-run           # Preview without creating
 # ──────────────────────────────────────────────────────────────────────────────
 
 RC="${RC_BIN:-rc}"

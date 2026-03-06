@@ -12,6 +12,7 @@ import (
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/entitlements"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/exportcmd"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/initcmd"
+	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/magicsetup"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/metrics"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/offerings"
 	"github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli/commands/packages"
@@ -51,4 +52,5 @@ func init() {
 	rootCmd.AddCommand(exportcmd.ImportCmd)
 	rootCmd.AddCommand(report.ReportCmd)
 	rootCmd.AddCommand(charts.ChartsCmd)
+	rootCmd.AddCommand(magicsetup.MagicSetupCmd)
 }
