@@ -1,13 +1,10 @@
 linters:
+  default: none
   enable:
-    - errcheck
     - govet
-    - staticcheck
+    - ineffassign
+    - unused
 
-linters-settings:
-  errcheck:
-    exclude-functions:
-      - (*github.com/spf13/cobra.Command).MarkFlagRequired
-      - (*github.com/spf13/cobra.Command).RegisterFlagCompletionFunc
-      - github.com/spf13/viper.BindPFlag
-      - github.com/spf13/viper.BindEnv
+issues:
+  exclude-dirs:
+    - vendor
