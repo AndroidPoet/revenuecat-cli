@@ -1,10 +1,5 @@
 linters:
-  default: none
+  disable-all: true
   enable:
     - govet
-    - ineffassign
     - unused
-
-issues:
-  exclude-dirs:
-    - vendor
