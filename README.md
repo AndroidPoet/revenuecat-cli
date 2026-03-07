@@ -23,15 +23,24 @@
 
 <br>
 
-## Install
+## Quick Install
 
 ```bash
 brew tap AndroidPoet/tap && brew install revenuecat-cli
 ```
 
-Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releases/latest). After install, use `revenuecat-cli` or the alias `rc`.
+Or download from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releases/latest). After install, use `revenuecat-cli` or the alias `rc`. See [all install options](#install-1) below.
 
 ## What's New
+
+### v0.5.0 — Magic Setup
+
+| Feature | Command | Description |
+|:--------|:--------|:------------|
+| **Magic Setup** | `rc magicsetup` | One-click interactive setup for iOS, Android, or both |
+| **5 Templates** | Freemium, Paywall, Trial, Tiered, Consumable | Preset configurations ready to customize |
+| **Price Input** | Per-product pricing | Set display prices during setup |
+| **Dry Run** | `rc magicsetup --dry-run` | Preview everything before creating |
 
 ### v0.4.0 — Charts & Analytics
 
@@ -65,9 +74,11 @@ rc doctor
 
 ## Command Overview
 
-> **80+ commands** across **15 resource groups** covering the full RevenueCat API v2.
+> **80+ commands** across **16 resource groups** covering the full RevenueCat API v2.
 
 | Category | Commands | What you can do |
+|:---------|:---------|:----------------|
+| **Magic Setup** | `magicsetup` | One-click setup wizard for iOS, Android, or both |
 |:---------|:---------|:----------------|
 | **Charts** | `list` `get` `options` `export` | 21 chart types with SVG visual export |
 | **Projects** | `list` `create` | Manage your RevenueCat projects |
@@ -84,6 +95,69 @@ rc doctor
 | **Webhooks** | `list` `create` | Set up webhook integrations |
 | **Audit Logs** | `list` | Track changes and access history |
 | **Auth** | `login` `switch` `list` `current` `delete` | Manage API key profiles |
+
+## Magic Setup
+
+Set up your entire RevenueCat offering stack in one command — apps, products, entitlements, offerings, and packages, all wired together.
+
+```bash
+rc magicsetup
+```
+
+### What it does
+
+```
+  ┌─────────────────────────────────────────────┐
+  │            Magic Setup                      │
+  │                                             │
+  │  Apps  Products  Entitlements  Offerings    │
+  │  All wired together, ready to go.           │
+  └─────────────────────────────────────────────┘
+```
+
+**1. Pick your platform**
+```
+  1) iOS only           (App Store)
+  2) Android only       (Play Store)
+  3) Both iOS + Android  (recommended)
+```
+
+**2. Choose a template (or build custom)**
+```
+  1) Freemium          Weekly, Monthly, Annual + Lifetime
+  2) Simple Paywall    Monthly + Annual
+  3) Trial-First       Free trial then Monthly / Annual
+  4) Tiered            Basic + Pro tiers with Monthly / Annual
+  5) Consumable        Credit / coin packs
+  6) Custom            Build your own from scratch
+```
+
+**3. Set prices and customize**
+```
+  Package                Type           Price          Product IDs
+  ────────────────────── ────────────── ────────────── ─────────────────────────
+  Weekly                 subscription   $1.99/week     iOS + Android
+  Monthly                subscription   $9.99/month    iOS + Android
+  Annual                 subscription   $49.99/year    iOS + Android
+  Lifetime               one_time       $149.99        iOS + Android
+```
+
+**4. Confirm and it creates everything**
+```
+✓ iOS app: app_1a2b3c
+✓ Android app: app_4d5e6f
+✓ 8 products created
+✓ Entitlements attached
+✓ Offering set as current
+✓ 4 packages wired up
+```
+
+### Options
+
+```bash
+rc magicsetup              # Interactive wizard
+rc magicsetup --dry-run    # Preview without creating anything
+```
 
 ## Charts & Analytics
 
@@ -300,12 +374,88 @@ Compare my staging and production project configurations
 
 [Browse all 10 skills →](https://github.com/AndroidPoet/revenuecat-cli-skills)
 
+## Install
+
+### Homebrew (macOS / Linux)
+
+```bash
+brew tap AndroidPoet/tap && brew install revenuecat-cli
+```
+
+### Go Install
+
+```bash
+go install github.com/AndroidPoet/revenuecat-cli/cmd/revenuecat-cli@latest
+```
+
+### Binary Download
+
+Download the latest binary for your platform from [Releases](https://github.com/AndroidPoet/revenuecat-cli/releases/latest).
+
+| Platform | Architecture | File |
+|:---------|:-------------|:-----|
+| macOS | Apple Silicon | `revenuecat-cli_*_darwin_arm64.tar.gz` |
+| macOS | Intel | `revenuecat-cli_*_darwin_amd64.tar.gz` |
+| Linux | x86_64 | `revenuecat-cli_*_linux_amd64.tar.gz` |
+| Linux | ARM64 | `revenuecat-cli_*_linux_arm64.tar.gz` |
+| Windows | x86_64 | `revenuecat-cli_*_windows_amd64.zip` |
+
+### Linux Packages
+
+```bash
+# Debian / Ubuntu
+sudo dpkg -i revenuecat-cli_*_amd64.deb
+
+# RHEL / Fedora
+sudo rpm -i revenuecat-cli_*_amd64.rpm
+```
+
+## How Releases Work
+
+Releases are fully automated via GitHub Actions and [GoReleaser](https://goreleaser.com).
+
+```
+Push v* tag  →  CI runs tests  →  GoReleaser builds  →  GitHub Release created
+                                       │
+                                       ├── Binaries (macOS, Linux, Windows × amd64/arm64)
+                                       ├── .deb and .rpm packages
+                                       ├── Homebrew formula updated (AndroidPoet/homebrew-tap)
+                                       └── Checksums (checksums.txt)
+```
+
+### Creating a release
+
+```bash
+# Tag and push
+git tag v0.5.0
+git push origin v0.5.0
+```
+
+That's it. The [release workflow](.github/workflows/release.yml) handles:
+1. Running tests
+2. Building binaries for all platforms (CGO_ENABLED=0)
+3. Creating `.tar.gz` / `.zip` archives
+4. Generating `.deb` and `.rpm` packages
+5. Publishing the GitHub Release
+6. Updating the Homebrew formula in [AndroidPoet/homebrew-tap](https://github.com/AndroidPoet/homebrew-tap)
+
+### CI
+
+Every push and PR to `master` runs:
+- `go build ./...`
+- `go test ./... -v -race`
+- `go vet ./...`
+- `golangci-lint`
+
 ## Contributing
 
 ```bash
-make build
-make test
-make lint
+git clone https://github.com/AndroidPoet/revenuecat-cli.git
+cd revenuecat-cli
+make deps      # Download dependencies
+make build     # Build binary to bin/
+make test      # Run tests
+make lint      # Run linter
 ```
 
 ## License
