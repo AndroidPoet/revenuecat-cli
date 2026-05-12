@@ -97,10 +97,10 @@ func init() {
 }
 
 type OfferingInfo struct {
-	ID          string `json:"id"`
-	LookupKey   string `json:"lookup_key"`
-	DisplayName string `json:"display_name"`
-	IsCurrent   bool   `json:"is_current"`
+	ID          string      `json:"id"`
+	LookupKey   string      `json:"lookup_key"`
+	DisplayName string      `json:"display_name"`
+	IsCurrent   bool        `json:"is_current"`
 	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
@@ -150,7 +150,7 @@ func runList(cmd *cobra.Command, args []string) error {
 
 	var resp struct {
 		Items    []OfferingInfo `json:"items"`
-		NextPage string        `json:"next_page,omitempty"`
+		NextPage string         `json:"next_page,omitempty"`
 	}
 	if err := client.Get(ctx, path+query, &resp); err != nil {
 		return err
@@ -238,7 +238,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	var offering OfferingInfo
 	path := fmt.Sprintf("/projects/%s/offerings/%s", client.GetProjectID(), offeringID)
-	if err := client.Patch(ctx, path, body, &offering); err != nil {
+	if err := client.Post(ctx, path, body, &offering); err != nil {
 		return err
 	}
 

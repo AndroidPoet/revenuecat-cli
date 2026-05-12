@@ -492,9 +492,11 @@ func (s *setupState) execute() error {
 
 	if s.platform == "ios" || s.platform == "both" {
 		body := map[string]interface{}{
-			"name":      s.appName + " iOS",
-			"type":      "app_store",
-			"bundle_id": s.iosBundleID,
+			"name": s.appName + " iOS",
+			"type": "app_store",
+			"app_store": map[string]interface{}{
+				"bundle_id": s.iosBundleID,
+			},
 		}
 		var result map[string]interface{}
 		path := fmt.Sprintf("/projects/%s/apps", projectID)
@@ -518,9 +520,11 @@ func (s *setupState) execute() error {
 
 	if s.platform == "android" || s.platform == "both" {
 		body := map[string]interface{}{
-			"name":         s.appName + " Android",
-			"type":         "play_store",
-			"package_name": s.androidPkg,
+			"name": s.appName + " Android",
+			"type": "play_store",
+			"play_store": map[string]interface{}{
+				"package_name": s.androidPkg,
+			},
 		}
 		var result map[string]interface{}
 		path := fmt.Sprintf("/projects/%s/apps", projectID)
@@ -694,7 +698,7 @@ func (s *setupState) execute() error {
 		updateBody := map[string]interface{}{"is_current": true}
 		updatePath := fmt.Sprintf("/projects/%s/offerings/%s", projectID, s.offeringID)
 		if !s.dryRun {
-			_ = s.client.Patch(ctx, updatePath, updateBody, nil)
+			_ = s.client.Post(ctx, updatePath, updateBody, nil)
 		}
 		output.PrintSuccess("Set as current offering")
 	}
@@ -734,11 +738,17 @@ func (s *setupState) execute() error {
 		}
 
 		if len(attachIDs) > 0 && pkgID != "" {
-			attachBody := map[string]interface{}{
-				"product_ids": attachIDs,
+			products := make([]map[string]interface{}, 0, len(attachIDs))
+			for _, id := range attachIDs {
+				products = append(products, map[string]interface{}{
+					"product_id":           id,
+					"eligibility_criteria": "all",
+				})
 			}
-			attachPath := fmt.Sprintf("/projects/%s/offerings/%s/packages/%s/actions/attach_products",
-				projectID, s.offeringID, pkgID)
+			attachBody := map[string]interface{}{
+				"products": products,
+			}
+			attachPath := fmt.Sprintf("/projects/%s/packages/%s/actions/attach_products", projectID, pkgID)
 
 			if !s.dryRun {
 				err := s.client.Post(ctx, attachPath, attachBody, nil)

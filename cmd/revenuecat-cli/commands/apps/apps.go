@@ -113,12 +113,63 @@ func init() {
 }
 
 type AppInfo struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Type        string `json:"type"`
-	BundleID    string `json:"bundle_id,omitempty"`
-	PackageName string `json:"package_name,omitempty"`
+	ID          string      `json:"id"`
+	Name        string      `json:"name"`
+	Type        string      `json:"type"`
+	BundleID    string      `json:"bundle_id,omitempty"`
+	PackageName string      `json:"package_name,omitempty"`
 	CreatedAt   interface{} `json:"created_at,omitempty"`
+}
+
+func (a *AppInfo) UnmarshalJSON(data []byte) error {
+	var aux struct {
+		ID          string      `json:"id"`
+		Name        string      `json:"name"`
+		Type        string      `json:"type"`
+		BundleID    string      `json:"bundle_id,omitempty"`
+		PackageName string      `json:"package_name,omitempty"`
+		CreatedAt   interface{} `json:"created_at,omitempty"`
+		AppStore    *struct {
+			BundleID string `json:"bundle_id"`
+		} `json:"app_store,omitempty"`
+		MacAppStore *struct {
+			BundleID string `json:"bundle_id"`
+		} `json:"mac_app_store,omitempty"`
+		PlayStore *struct {
+			PackageName string `json:"package_name"`
+		} `json:"play_store,omitempty"`
+		Amazon *struct {
+			PackageName string `json:"package_name"`
+		} `json:"amazon,omitempty"`
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	a.ID = aux.ID
+	a.Name = aux.Name
+	a.Type = aux.Type
+	a.BundleID = aux.BundleID
+	a.PackageName = aux.PackageName
+	a.CreatedAt = aux.CreatedAt
+
+	if a.BundleID == "" {
+		if aux.AppStore != nil && aux.AppStore.BundleID != "" {
+			a.BundleID = aux.AppStore.BundleID
+		} else if aux.MacAppStore != nil && aux.MacAppStore.BundleID != "" {
+			a.BundleID = aux.MacAppStore.BundleID
+		}
+	}
+
+	if a.PackageName == "" {
+		if aux.PlayStore != nil && aux.PlayStore.PackageName != "" {
+			a.PackageName = aux.PlayStore.PackageName
+		} else if aux.Amazon != nil && aux.Amazon.PackageName != "" {
+			a.PackageName = aux.Amazon.PackageName
+		}
+	}
+
+	return nil
 }
 
 func parseTimeout() time.Duration {
@@ -174,7 +225,6 @@ func runList(cmd *cobra.Command, args []string) error {
 	if err := client.Get(ctx, path+query, &resp); err != nil {
 		return err
 	}
-
 	if resp.NextPage != "" {
 		output.PrintInfo("More results available. Use --starting-after=%s for next page, or --all for everything.", resp.NextPage)
 	}
@@ -226,11 +276,36 @@ func runCreate(cmd *cobra.Command, args []string) error {
 		"name": appName,
 		"type": appType,
 	}
-	if bundleID != "" {
-		body["bundle_id"] = bundleID
-	}
-	if packageName != "" {
-		body["package_name"] = packageName
+
+	switch appType {
+	case "app_store":
+		if bundleID == "" {
+			return fmt.Errorf("--bundle-id is required when --type=app_store")
+		}
+		body["app_store"] = map[string]interface{}{
+			"bundle_id": bundleID,
+		}
+	case "mac_app_store":
+		if bundleID == "" {
+			return fmt.Errorf("--bundle-id is required when --type=mac_app_store")
+		}
+		body["mac_app_store"] = map[string]interface{}{
+			"bundle_id": bundleID,
+		}
+	case "play_store":
+		if packageName == "" {
+			return fmt.Errorf("--package-name is required when --type=play_store")
+		}
+		body["play_store"] = map[string]interface{}{
+			"package_name": packageName,
+		}
+	case "amazon":
+		if packageName == "" {
+			return fmt.Errorf("--package-name is required when --type=amazon")
+		}
+		body["amazon"] = map[string]interface{}{
+			"package_name": packageName,
+		}
 	}
 
 	var app AppInfo
@@ -266,15 +341,19 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 		body["name"] = appName
 	}
 	if bundleID != "" {
-		body["bundle_id"] = bundleID
+		body["app_store"] = map[string]interface{}{
+			"bundle_id": bundleID,
+		}
 	}
 	if packageName != "" {
-		body["package_name"] = packageName
+		body["play_store"] = map[string]interface{}{
+			"package_name": packageName,
+		}
 	}
 
 	var app AppInfo
 	path := fmt.Sprintf("/projects/%s/apps/%s", client.GetProjectID(), appID)
-	if err := client.Patch(ctx, path, body, &app); err != nil {
+	if err := client.Post(ctx, path, body, &app); err != nil {
 		return err
 	}
 

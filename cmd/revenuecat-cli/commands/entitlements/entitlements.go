@@ -132,9 +132,9 @@ func init() {
 }
 
 type EntitlementInfo struct {
-	ID          string `json:"id"`
-	LookupKey   string `json:"lookup_key"`
-	DisplayName string `json:"display_name"`
+	ID          string      `json:"id"`
+	LookupKey   string      `json:"lookup_key"`
+	DisplayName string      `json:"display_name"`
 	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
@@ -184,7 +184,7 @@ func runList(cmd *cobra.Command, args []string) error {
 
 	var resp struct {
 		Items    []EntitlementInfo `json:"items"`
-		NextPage string           `json:"next_page,omitempty"`
+		NextPage string            `json:"next_page,omitempty"`
 	}
 	if err := client.Get(ctx, path+query, &resp); err != nil {
 		return err
@@ -366,7 +366,7 @@ func runAttachProducts(cmd *cobra.Command, args []string) error {
 		"product_ids": productIDs,
 	}
 
-	path := fmt.Sprintf("/projects/%s/entitlements/%s/products/attach", client.GetProjectID(), entitlementID)
+	path := fmt.Sprintf("/projects/%s/entitlements/%s/actions/attach_products", client.GetProjectID(), entitlementID)
 	if err := client.Post(ctx, path, body, nil); err != nil {
 		return err
 	}
@@ -397,7 +397,7 @@ func runDetachProducts(cmd *cobra.Command, args []string) error {
 		"product_ids": productIDs,
 	}
 
-	path := fmt.Sprintf("/projects/%s/entitlements/%s/products/detach", client.GetProjectID(), entitlementID)
+	path := fmt.Sprintf("/projects/%s/entitlements/%s/actions/detach_products", client.GetProjectID(), entitlementID)
 	if err := client.Post(ctx, path, body, nil); err != nil {
 		return err
 	}

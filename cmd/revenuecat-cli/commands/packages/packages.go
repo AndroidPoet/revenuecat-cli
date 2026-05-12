@@ -131,10 +131,10 @@ func init() {
 }
 
 type PackageInfo struct {
-	ID          string `json:"id"`
-	LookupKey   string `json:"lookup_key"`
-	DisplayName string `json:"display_name"`
-	OfferingID  string `json:"offering_id,omitempty"`
+	ID          string      `json:"id"`
+	LookupKey   string      `json:"lookup_key"`
+	DisplayName string      `json:"display_name"`
+	OfferingID  string      `json:"offering_id,omitempty"`
 	CreatedAt   interface{} `json:"created_at,omitempty"`
 }
 
@@ -184,7 +184,7 @@ func runList(cmd *cobra.Command, args []string) error {
 
 	var resp struct {
 		Items    []PackageInfo `json:"items"`
-		NextPage string       `json:"next_page,omitempty"`
+		NextPage string        `json:"next_page,omitempty"`
 	}
 	if err := client.Get(ctx, path+query, &resp); err != nil {
 		return err
@@ -248,11 +248,18 @@ func runAttachProducts(cmd *cobra.Command, args []string) error {
 	ctx, cancel := client.Context()
 	defer cancel()
 
+	products := make([]map[string]interface{}, 0, len(productIDs))
+	for _, id := range productIDs {
+		products = append(products, map[string]interface{}{
+			"product_id":           id,
+			"eligibility_criteria": "all",
+		})
+	}
 	body := map[string]interface{}{
-		"product_ids": productIDs,
+		"products": products,
 	}
 
-	path := fmt.Sprintf("/projects/%s/packages/%s/products/attach", client.GetProjectID(), packageID)
+	path := fmt.Sprintf("/projects/%s/packages/%s/actions/attach_products", client.GetProjectID(), packageID)
 	if err := client.Post(ctx, path, body, nil); err != nil {
 		return err
 	}
@@ -283,7 +290,7 @@ func runDetachProducts(cmd *cobra.Command, args []string) error {
 		"product_ids": productIDs,
 	}
 
-	path := fmt.Sprintf("/projects/%s/packages/%s/products/detach", client.GetProjectID(), packageID)
+	path := fmt.Sprintf("/projects/%s/packages/%s/actions/detach_products", client.GetProjectID(), packageID)
 	if err := client.Post(ctx, path, body, nil); err != nil {
 		return err
 	}
