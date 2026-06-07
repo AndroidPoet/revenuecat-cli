@@ -1,11 +1,6 @@
 <div align="center">
 
-<br>
-
-<img src="assets/logo.png" alt="RevenueCat CLI" width="420">
-
-<br>
-<br>
+<img src="art/logo.svg" width="800" alt="RevenueCat CLI">
 
 **The command-line tool for RevenueCat — manage subscriptions, analyze charts, and export reports from your terminal.**
 
