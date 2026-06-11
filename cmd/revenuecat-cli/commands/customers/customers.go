@@ -21,6 +21,7 @@ var (
 	startAfter    string
 	allPages      bool
 	attributes    string
+	expiresAt     int64
 )
 
 // CustomersCmd manages customers
@@ -191,8 +192,10 @@ func init() {
 	// Grant entitlement flags
 	grantEntitlementCmd.Flags().StringVar(&customerID, "customer-id", "", "customer ID")
 	grantEntitlementCmd.Flags().StringVar(&entitlementID, "entitlement-id", "", "entitlement ID")
+	grantEntitlementCmd.Flags().Int64Var(&expiresAt, "expires-at", 0, "expiry date in ms since epoch (required by the API)")
 	grantEntitlementCmd.MarkFlagRequired("customer-id")
 	grantEntitlementCmd.MarkFlagRequired("entitlement-id")
+	grantEntitlementCmd.MarkFlagRequired("expires-at")
 
 	// Revoke entitlement flags
 	revokeEntitlementCmd.Flags().StringVar(&customerID, "customer-id", "", "customer ID")
@@ -347,7 +350,7 @@ func runCreate(cmd *cobra.Command, args []string) error {
 	ctx, cancel := client.Context()
 	defer cancel()
 
-	body := map[string]interface{}{"app_user_id": customerID}
+	body := map[string]interface{}{"id": customerID}
 	path := fmt.Sprintf("/projects/%s/customers", client.GetProjectID())
 	var customer map[string]interface{}
 	if err := client.Post(ctx, path, body, &customer); err != nil {
@@ -655,7 +658,10 @@ func runGrantEntitlement(cmd *cobra.Command, args []string) error {
 	ctx, cancel := client.Context()
 	defer cancel()
 
-	body := map[string]interface{}{"entitlement_id": entitlementID}
+	body := map[string]interface{}{
+		"entitlement_id": entitlementID,
+		"expires_at":     expiresAt,
+	}
 	path := fmt.Sprintf("/projects/%s/customers/%s/actions/grant_entitlement", client.GetProjectID(), customerID)
 	if err := client.Post(ctx, path, body, nil); err != nil {
 		return err
