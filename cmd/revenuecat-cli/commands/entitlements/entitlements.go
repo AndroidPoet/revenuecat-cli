@@ -276,7 +276,7 @@ func runUpdate(cmd *cobra.Command, args []string) error {
 
 	var ent EntitlementInfo
 	path := fmt.Sprintf("/projects/%s/entitlements/%s", client.GetProjectID(), entitlementID)
-	if err := client.Patch(ctx, path, body, &ent); err != nil {
+	if err := client.Post(ctx, path, body, &ent); err != nil {
 		return err
 	}
 

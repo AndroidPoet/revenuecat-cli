@@ -412,7 +412,7 @@ func runAPIKeys(cmd *cobra.Command, args []string) error {
 		} `json:"items"`
 	}
 
-	path := fmt.Sprintf("/projects/%s/apps/%s/api_keys", client.GetProjectID(), appID)
+	path := fmt.Sprintf("/projects/%s/apps/%s/public_api_keys", client.GetProjectID(), appID)
 	if err := client.Get(ctx, path, &resp); err != nil {
 		return err
 	}
